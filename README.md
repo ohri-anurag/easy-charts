@@ -26,7 +26,7 @@ elm install ohri-anurag/easy-charts
 
 # FAQs
 
-- How do we support multiple charts on one page?
+## How do we support multiple charts on one page?
 
 Like the example below
 ```elm
@@ -58,11 +58,14 @@ update msg model =
     NoOp -> model
 ```
 
-- Can I see some examples?
-Sure.
+## Can I see some examples?
 
-- How do I rotate the x-axis labels?
+[Sure.](https://ohri-anurag.github.io/easy-charts/)
+
+## How do I rotate the x-axis labels?
+
 Sometimes, the labels on the horizontal axis (x axis) are too long. This can cause them to display over each other. You can set a rotation value in this case using `setLabelRotation`. Example 1 shows how to do this.
 
-- My y-axis labels are too long, they are getting cropped off. How do I rectify this?
+## My y-axis labels are too long, they are getting cropped off. How do I rectify this?
+
 You can set an appropriate width for these labels, using `setValueWidth`. Example 3 shows how to do this.
