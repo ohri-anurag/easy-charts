@@ -60,7 +60,9 @@ update msg model =
 
 ## Can I see some examples?
 
-[Sure.](https://ohri-anurag.github.io/easy-charts/)
+[Sure.](https://ohri-anurag.github.io/easy-charts/).
+
+You can clone this repo, go inside the `examples` directory, and run `elm make src/Main.elm`. Open the `index.html` file thus generated.
 
 ## How do I rotate the x-axis labels?
 
