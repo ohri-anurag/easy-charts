@@ -42,7 +42,7 @@ view model = div
   [ lineChart options data ChartMessage1 model.chartModel1
   , lineChart options2 data2 ChartMessage2 model.chartModel2
   , lineChart options3 data3 ChartMessage3 model.chartModel3
-  , lineChart commonOptions data4 ChartMessage4 model.chartModel4
+  , lineChart options4 data4 ChartMessage4 model.chartModel4
   , lineChart options5 data5 ChartMessage5 model.chartModel5
   ]
 
@@ -105,6 +105,10 @@ data4 =
     , createDataSet "x^2" (map (\x -> toFloat (x^2)) xs) <| fromColor opaque darkGreen
     , createDataSet "x^3" (map (\x -> toFloat (x^3)) xs) <| fromColor opaque darkRed
     ]
+
+options4 : LineChartOptions
+options4 = commonOptions
+  |> setLegendWidth 50
 
 data5 : LineChartData
 data5 =

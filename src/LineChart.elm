@@ -18,6 +18,8 @@ module LineChart exposing
   , setLabelRotation
   , setValueWidth
   , setPointRadius
+  , setLegendWidth
+  , setLegendSpacing
   )
 
 {-|
@@ -35,7 +37,8 @@ NOTE: Go through the Setup section initially. It is required to get the tooltip 
 @docs lineChart
 
 # Configuring
-@docs LineChartOptions, defaultLineChartOptions, setChartWidth, setChartHeight, setTooltipWidth, setTooltipHeight, setLabelWidth, setLabelRotation, setValueWidth, setPointRadius
+@docs LineChartOptions, defaultLineChartOptions, setChartWidth, setChartHeight, setTooltipWidth, setTooltipHeight, setLabelWidth
+@docs setLabelRotation, setValueWidth, setPointRadius, setLegendWidth, setLegendSpacing
 -}
 
 import Html exposing (Html)
@@ -460,8 +463,8 @@ lineChart (LineChartOptionsC options) data toMsg (ChartModelC model) =
           |> concat
         legend = legends legendBox
           { data = map (\lds -> (lds.color, lds.label)) labelledData.labelledDataSets
-          , width = 100
-          , spacing = 50
+          , width = options.legendWidth
+          , spacing = options.legendSpacing
           }
       in
       svg [w |> String.fromInt >> SA.width, h |> String.fromInt >> SA.height, HA.style "font-family" "sans-serif"]
@@ -480,6 +483,8 @@ type alias LineChartOptionsR =
   , labelRotation : Maybe Int
   , valueWidth : Int
   , pointRadius : Int
+  , legendWidth : Int
+  , legendSpacing : Int
   }
 
 type alias Dimensions =
@@ -523,6 +528,8 @@ defaultLineChartOptions = LineChartOptionsC
   , labelWidth = 100
   , labelRotation = Nothing
   , pointRadius = 2
+  , legendWidth = 100
+  , legendSpacing = 50
   }
 
 {-|
@@ -568,7 +575,7 @@ setValueWidth vw (LineChartOptionsC options) = LineChartOptionsC
   { options | valueWidth = vw }
 
 {-|
-Set the Label Rotation.
+Set the Label Rotation in degrees.
 1. If you provide rotation value (even if it is `Just 0`), label will be rotated from its end, counter-clockwise.
 2. If you don't provide a value (Nothing), label will be center aligned with its axis.
 -}
@@ -582,6 +589,20 @@ Set the point radius on the chart. Hovered points double their radius.
 setPointRadius : Int -> LineChartOptions -> LineChartOptions
 setPointRadius r (LineChartOptionsC options) = LineChartOptionsC
   { options | pointRadius = r }
+
+{-|
+Set the width of one legend key.
+-}
+setLegendWidth : Int -> LineChartOptions -> LineChartOptions
+setLegendWidth lw (LineChartOptionsC options) = LineChartOptionsC
+  { options | legendWidth = lw }
+
+{-|
+Set the spacing between two legend keys.
+-}
+setLegendSpacing : Int -> LineChartOptions -> LineChartOptions
+setLegendSpacing ls (LineChartOptionsC options) = LineChartOptionsC
+  { options | legendSpacing = ls }
 
 {-|
 Used to update the ChartModel type. This should be used inside your update function.
