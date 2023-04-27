@@ -1,5 +1,7 @@
-module LineChart.Lines exposing (..)
+module LineChart.Lines exposing (line, plotLine)
 
+import LineChart.Types exposing (ChartPoint)
+import List exposing (intersperse, map)
 import String exposing (fromFloat)
 import Svg
 import Svg.Attributes as SA
@@ -25,3 +27,22 @@ line options =
     , SA.stroke <| toRGBAString options.stroke
     ]
     []
+
+type alias PlotlineOptions =
+  { points : List ChartPoint
+  , color : TransparentColor
+  }
+
+plotLine : PlotlineOptions -> Svg.Svg msg
+plotLine options =
+  let
+    pointsString = map (\cp -> String.fromFloat cp.x ++ "," ++ String.fromFloat cp.y) options.points
+      |> intersperse " "
+      |> String.concat
+  in
+    Svg.polyline
+      [ SA.points pointsString
+      , SA.fill "none"
+      , options.color |> toRGBAString >> SA.stroke
+      , SA.shapeRendering "geometricPrecision"
+      ] []

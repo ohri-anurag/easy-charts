@@ -41,17 +41,16 @@ import Html exposing (Html)
 import Html.Attributes as HA
 import Html.Events exposing (..)
 import List exposing (..)
-import Svg exposing (Svg, circle, g, polyline, rect, svg, text, text_)
+import Svg exposing (Svg, circle, g, rect, svg, text, text_)
 import Svg.Attributes as SA
 import String exposing (fromFloat)
 import TransparentColor exposing (..)
-import Json.Decode exposing (index)
-import LineChart.Verticals as V
+import LineChart.Lines as L
 import LineChart.Horizontals as H
+import LineChart.Types exposing (ChartPoint)
+import LineChart.Verticals as V
 import SolidColor exposing (fromRGB)
 import String exposing (fromInt)
-
-type alias ChartPoint = { x : Float, y : Float }
 
 type alias HoveredPoint =
   { point : ChartPoint
@@ -218,25 +217,6 @@ type alias Box =
   , y : Float
   }
 
-toChartPoints : Box -> Int -> (Float, Float) -> List (List Float) -> List (List ChartPoint)
-toChartPoints box num (l, u) dps =
-  let
-    scale y =
-      let
-        dy = (y - l) / (u - l)
-      in
-        box.y + box.h - dy * box.h
-    avgWidth = box.w / toFloat (num - 1)
-    toPoint i dp =
-      let
-        sh = scale dp
-      in
-        { x = box.x + toFloat i * avgWidth
-        , y = sh
-        }
-  in
-    map (indexedMap toPoint) dps
-
 tooltip : Float -> Float -> Float -> Int -> HoveredPoint -> Svg msg
 tooltip w h cw pointRadius hp =
   let
@@ -338,6 +318,40 @@ grid box labels (l, u) step =
   in
     hlines2 ++ vlines2
 
+plotline : Box -> Int -> (Float, Float) -> (ChartMsg -> msg) -> (Int -> List (Svg.Attribute msg)) -> Int -> LabelledDataSet -> List (Svg msg)
+plotline box len (l, u) toMsg hoverClasses i labelledDataSet =
+  let
+    dx = box.w / toFloat (len - 1)
+    scale h = box.y + box.h * (u - h) / (u - l)
+    points = indexedMap (\j (label, height) ->
+      { point = { x = box.x + toFloat j * dx, y = scale height }
+      , label = label
+      , height = height
+      , index = i * len + j
+      , dataSetLabel = labelledDataSet.label
+      , dataSetColor = labelledDataSet.color
+      }) labelledDataSet.dataSet
+  in
+    L.plotLine
+      { points = map .point points
+      , color = labelledDataSet.color
+      }
+    ::
+    map (\hp ->
+      circle
+        ( [ hp.point.y |> fromFloat |> SA.cy
+          , hp.point.x |> fromFloat |> SA.cx
+          , onMouseOver
+            <| toMsg
+            <| Focus hp
+          , onMouseOut <| toMsg Blur
+          , hp.dataSetColor |> toRGBAString >> SA.fill
+          ]
+          ++ hoverClasses hp.index
+        )
+        []
+    ) points
+
 calculateStep : (Float, Float) -> Float -> Float
 calculateStep (l, u) m =
   let
@@ -423,9 +437,7 @@ lineChart (LineChartOptionsC options) data toMsg (ChartModelC model) =
     Nothing -> svg [] []
     Just labelledData ->
       let
-        chartHeights = map (.dataSet >> map Tuple.second) labelledData.labelledDataSets
         (bounds, step) = calculateLimits (labelledData.min, labelledData.max)
-
         chartBox =
           let
             maxLabelDimension = toFloat <| if lw > lh then lw else lh
@@ -435,48 +447,12 @@ lineChart (LineChartOptionsC options) data toMsg (ChartModelC model) =
           , x = maxLabelDimension
           , y = 0.05 * toFloat h
           }
-        chartPointSets = toChartPoints chartBox labelledData.length bounds chartHeights
         grids = grid chartBox labelledData.labels bounds step
-        lines = map2 (\color chartPoints ->
-          let
-            pointsString = map (\cp -> String.fromFloat cp.x ++ "," ++ String.fromFloat cp.y) chartPoints
-              |> intersperse " "
-              |> String.concat
-          in
-          polyline [SA.points pointsString, SA.fill "none", color |> toRGBAString >> SA.stroke] []
-          ) (map .color labelledData.labelledDataSets) chartPointSets
-        processOne dataSetLabel color i j ((label, height), cp) =
-          let
-            index = i * labelledData.length + j
-          in
-          circle
-            ( [ cp.y |> fromFloat |> SA.cy
-              , cp.x |> fromFloat |> SA.cx
-              , onMouseOver
-                <| toMsg
-                <| Focus
-                  { point = cp
-                  , label = label
-                  , height = height
-                  , index = index
-                  , dataSetLabel = dataSetLabel
-                  , dataSetColor = color
-                  }
-              , onMouseOut <| toMsg Blur
-              , color |> toRGBAString >> SA.fill
-              ]
-              ++ hoverClass index
-            )
-            []
-        processSet i (labelledDataSet, chartPoints) =
-          map2 Tuple.pair labelledDataSet.dataSet chartPoints
-          |> indexedMap (processOne labelledDataSet.label labelledDataSet.color i)
-        points = map2 Tuple.pair labelledData.labelledDataSets chartPointSets
-          |> indexedMap processSet
+        points = indexedMap (plotline chartBox labelledData.length bounds toMsg hoverClass) labelledData.labelledDataSets
           |> concat
       in
       svg [w |> String.fromInt >> SA.width, h |> String.fromInt >> SA.height, HA.style "font-family" "sans-serif"]
-        <| grids ++ lines ++ points ++ filterMap (Maybe.map (tooltip (toFloat tw) (toFloat th) (toFloat w) options.pointRadius)) [ model.hovered ]
+        <| grids ++ points ++ filterMap (Maybe.map (tooltip (toFloat tw) (toFloat th) (toFloat w) options.pointRadius)) [ model.hovered ]
 
 {-|
 Used to configure the line chart.
