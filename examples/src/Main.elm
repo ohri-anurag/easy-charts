@@ -39,11 +39,11 @@ init =
 view : Model -> Html Msg
 view model = div
   []
-  [ lineChart (setLabelRotation (Just -50) options) data ChartMessage1 model.chartModel1
-  , lineChart options data2 ChartMessage2 model.chartModel2
-  , lineChart (setValueWidth 150 options) data3 ChartMessage3 model.chartModel3
-  , lineChart options data4 ChartMessage4 model.chartModel4
-  , lineChart (setPointRadius 2 options) data5 ChartMessage5 model.chartModel5
+  [ lineChart options data ChartMessage1 model.chartModel1
+  , lineChart options2 data2 ChartMessage2 model.chartModel2
+  , lineChart options3 data3 ChartMessage3 model.chartModel3
+  , lineChart commonOptions data4 ChartMessage4 model.chartModel4
+  , lineChart options5 data5 ChartMessage5 model.chartModel5
   ]
 
 update : Msg -> Model -> Model
@@ -56,8 +56,8 @@ update msg model =
     ChartMessage5 chartMsg -> { model | chartModel5 = updateChartModel chartMsg model.chartModel5 }
     NoOp -> model
 
-options : LineChartOptions
-options =
+commonOptions : LineChartOptions
+commonOptions =
   setChartWidth 1200 defaultLineChartOptions
   |> setChartHeight 800
   |> setPointRadius 4
@@ -68,6 +68,10 @@ data =
     [ createDataSet "Anurag" (List.map .anuragWeight rawData) <| fromColor opaque green
     ]
 
+options : LineChartOptions
+options = commonOptions
+  |> setLabelRotation (Just -50)
+
 data2 : LineChartData
 data2 =
   createData ["Mon", "Tue", "Wed", "Thu", "Fri"]
@@ -75,12 +79,21 @@ data2 =
     , createDataSet "Sleeping Time" [23,22,21,22,23] <| fromColor opaque red
     ]
 
+options2 : LineChartOptions
+options2 = commonOptions
+  |> setTooltipWidth 150
+
 data3 : LineChartData
 data3 =
   createData ["Mon", "Tue", "Wed", "Thu", "Fri"]
     [ createDataSet "Toosla Corp" [0.147,0.148,0.149,0.148,0.147] <| fromColor opaque brown
     , createDataSet "Abode Limited" [0.1523,0.1522,0.1521,0.1522,0.1523] <| fromColor opaque aquamarine
     ]
+
+options3 : LineChartOptions
+options3 = commonOptions
+  |> setValueWidth 150
+  |> setTooltipWidth 170
 
 data4 : LineChartData
 data4 =
@@ -103,6 +116,11 @@ data5 =
     [ createDataSet "sin x" (map (\x -> sin x) xs) <| fromColor opaque brown
     , createDataSet "cos x" (map (\x -> cos x) xs) <| fromColor opaque aquamarine
     ]
+
+options5 : LineChartOptions
+options5 = commonOptions
+  |> setPointRadius 2
+  |> setTooltipWidth 210
 
 main = sandbox {view = view, update = update, init = init}
 

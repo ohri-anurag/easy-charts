@@ -5275,6 +5275,65 @@ var $author$project$Main$ChartMessage4 = function (a) {
 var $author$project$Main$ChartMessage5 = function (a) {
 	return {$: 'ChartMessage5', a: a};
 };
+var $author$project$LineChart$LineChartOptionsC = function (a) {
+	return {$: 'LineChartOptionsC', a: a};
+};
+var $author$project$LineChart$defaultLineChartOptions = $author$project$LineChart$LineChartOptionsC(
+	{
+		chartDimensions: {height: 600, width: 600},
+		labelRotation: $elm$core$Maybe$Nothing,
+		labelWidth: 100,
+		pointRadius: 2,
+		tooltipDimensions: {height: 50, width: 120},
+		valueWidth: 100
+	});
+var $author$project$LineChart$setHeight = F2(
+	function (h, dimensions) {
+		return _Utils_update(
+			dimensions,
+			{height: h});
+	});
+var $author$project$LineChart$setChartHeight = F2(
+	function (ch, _v0) {
+		var options = _v0.a;
+		return $author$project$LineChart$LineChartOptionsC(
+			_Utils_update(
+				options,
+				{
+					chartDimensions: A2($author$project$LineChart$setHeight, ch, options.chartDimensions)
+				}));
+	});
+var $author$project$LineChart$setWidth = F2(
+	function (w, dimensions) {
+		return _Utils_update(
+			dimensions,
+			{width: w});
+	});
+var $author$project$LineChart$setChartWidth = F2(
+	function (cw, _v0) {
+		var options = _v0.a;
+		return $author$project$LineChart$LineChartOptionsC(
+			_Utils_update(
+				options,
+				{
+					chartDimensions: A2($author$project$LineChart$setWidth, cw, options.chartDimensions)
+				}));
+	});
+var $author$project$LineChart$setPointRadius = F2(
+	function (r, _v0) {
+		var options = _v0.a;
+		return $author$project$LineChart$LineChartOptionsC(
+			_Utils_update(
+				options,
+				{pointRadius: r}));
+	});
+var $author$project$Main$commonOptions = A2(
+	$author$project$LineChart$setPointRadius,
+	4,
+	A2(
+		$author$project$LineChart$setChartHeight,
+		800,
+		A2($author$project$LineChart$setChartWidth, 1200, $author$project$LineChart$defaultLineChartOptions)));
 var $author$project$LineChart$LineChartDataC = function (a) {
 	return {$: 'LineChartDataC', a: a};
 };
@@ -6756,65 +6815,6 @@ var $author$project$LineChart$lineChart = F4(
 									[model.hovered]))))));
 		}
 	});
-var $author$project$LineChart$LineChartOptionsC = function (a) {
-	return {$: 'LineChartOptionsC', a: a};
-};
-var $author$project$LineChart$defaultLineChartOptions = $author$project$LineChart$LineChartOptionsC(
-	{
-		chartDimensions: {height: 600, width: 600},
-		labelRotation: $elm$core$Maybe$Nothing,
-		labelWidth: 100,
-		pointRadius: 2,
-		tooltipDimensions: {height: 50, width: 120},
-		valueWidth: 100
-	});
-var $author$project$LineChart$setHeight = F2(
-	function (h, dimensions) {
-		return _Utils_update(
-			dimensions,
-			{height: h});
-	});
-var $author$project$LineChart$setChartHeight = F2(
-	function (ch, _v0) {
-		var options = _v0.a;
-		return $author$project$LineChart$LineChartOptionsC(
-			_Utils_update(
-				options,
-				{
-					chartDimensions: A2($author$project$LineChart$setHeight, ch, options.chartDimensions)
-				}));
-	});
-var $author$project$LineChart$setWidth = F2(
-	function (w, dimensions) {
-		return _Utils_update(
-			dimensions,
-			{width: w});
-	});
-var $author$project$LineChart$setChartWidth = F2(
-	function (cw, _v0) {
-		var options = _v0.a;
-		return $author$project$LineChart$LineChartOptionsC(
-			_Utils_update(
-				options,
-				{
-					chartDimensions: A2($author$project$LineChart$setWidth, cw, options.chartDimensions)
-				}));
-	});
-var $author$project$LineChart$setPointRadius = F2(
-	function (r, _v0) {
-		var options = _v0.a;
-		return $author$project$LineChart$LineChartOptionsC(
-			_Utils_update(
-				options,
-				{pointRadius: r}));
-	});
-var $author$project$Main$options = A2(
-	$author$project$LineChart$setPointRadius,
-	4,
-	A2(
-		$author$project$LineChart$setChartHeight,
-		800,
-		A2($author$project$LineChart$setChartWidth, 1200, $author$project$LineChart$defaultLineChartOptions)));
 var $author$project$LineChart$setLabelRotation = F2(
 	function (lr, _v0) {
 		var options = _v0.a;
@@ -6823,6 +6823,21 @@ var $author$project$LineChart$setLabelRotation = F2(
 				options,
 				{labelRotation: lr}));
 	});
+var $author$project$Main$options = A2(
+	$author$project$LineChart$setLabelRotation,
+	$elm$core$Maybe$Just(-50),
+	$author$project$Main$commonOptions);
+var $author$project$LineChart$setTooltipWidth = F2(
+	function (tw, _v0) {
+		var options = _v0.a;
+		return $author$project$LineChart$LineChartOptionsC(
+			_Utils_update(
+				options,
+				{
+					tooltipDimensions: A2($author$project$LineChart$setWidth, tw, options.tooltipDimensions)
+				}));
+	});
+var $author$project$Main$options2 = A2($author$project$LineChart$setTooltipWidth, 150, $author$project$Main$commonOptions);
 var $author$project$LineChart$setValueWidth = F2(
 	function (vw, _v0) {
 		var options = _v0.a;
@@ -6831,35 +6846,25 @@ var $author$project$LineChart$setValueWidth = F2(
 				options,
 				{valueWidth: vw}));
 	});
+var $author$project$Main$options3 = A2(
+	$author$project$LineChart$setTooltipWidth,
+	170,
+	A2($author$project$LineChart$setValueWidth, 150, $author$project$Main$commonOptions));
+var $author$project$Main$options5 = A2(
+	$author$project$LineChart$setTooltipWidth,
+	210,
+	A2($author$project$LineChart$setPointRadius, 2, $author$project$Main$commonOptions));
 var $author$project$Main$view = function (model) {
 	return A2(
 		$elm$html$Html$div,
 		_List_Nil,
 		_List_fromArray(
 			[
-				A4(
-				$author$project$LineChart$lineChart,
-				A2(
-					$author$project$LineChart$setLabelRotation,
-					$elm$core$Maybe$Just(-50),
-					$author$project$Main$options),
-				$author$project$Main$data,
-				$author$project$Main$ChartMessage1,
-				model.chartModel1),
-				A4($author$project$LineChart$lineChart, $author$project$Main$options, $author$project$Main$data2, $author$project$Main$ChartMessage2, model.chartModel2),
-				A4(
-				$author$project$LineChart$lineChart,
-				A2($author$project$LineChart$setValueWidth, 150, $author$project$Main$options),
-				$author$project$Main$data3,
-				$author$project$Main$ChartMessage3,
-				model.chartModel3),
-				A4($author$project$LineChart$lineChart, $author$project$Main$options, $author$project$Main$data4, $author$project$Main$ChartMessage4, model.chartModel4),
-				A4(
-				$author$project$LineChart$lineChart,
-				A2($author$project$LineChart$setPointRadius, 2, $author$project$Main$options),
-				$author$project$Main$data5,
-				$author$project$Main$ChartMessage5,
-				model.chartModel5)
+				A4($author$project$LineChart$lineChart, $author$project$Main$options, $author$project$Main$data, $author$project$Main$ChartMessage1, model.chartModel1),
+				A4($author$project$LineChart$lineChart, $author$project$Main$options2, $author$project$Main$data2, $author$project$Main$ChartMessage2, model.chartModel2),
+				A4($author$project$LineChart$lineChart, $author$project$Main$options3, $author$project$Main$data3, $author$project$Main$ChartMessage3, model.chartModel3),
+				A4($author$project$LineChart$lineChart, $author$project$Main$commonOptions, $author$project$Main$data4, $author$project$Main$ChartMessage4, model.chartModel4),
+				A4($author$project$LineChart$lineChart, $author$project$Main$options5, $author$project$Main$data5, $author$project$Main$ChartMessage5, model.chartModel5)
 			]));
 };
 var $author$project$Main$main = $elm$browser$Browser$sandbox(
