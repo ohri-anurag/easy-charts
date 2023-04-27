@@ -218,8 +218,6 @@ type alias Box =
   , y : Float
   }
 
--- Here width and height are the charting area dimensions
--- not the dimensions of the entire SVG.
 toChartPoints : Box -> Int -> (Float, Float) -> List (List Float) -> List (List ChartPoint)
 toChartPoints box num (l, u) dps =
   let
@@ -303,11 +301,12 @@ getFilteredLabels width labels =
       then (0, [])
       else helper 0
 
-grid : Box -> List String -> (Float, Float) -> Float -> (Float, Float) -> List (Svg msg)
-grid box labels (l, u) step (lw, lh) =
+grid : Box -> List String -> (Float, Float) -> Float -> List (Svg msg)
+grid box labels (l, u) step =
   let
     lightColor = fromColor opaque <| fromRGB (204, 204, 204)
     darkColor = fromColor opaque <| fromRGB (170, 170, 170)
+    textColor = fromColor opaque <| fromRGB (119, 119, 119)
     numH = (u - l) / step |> round
     dy = box.h / toFloat numH
     numLabels = length labels
@@ -320,7 +319,7 @@ grid box labels (l, u) step (lw, lh) =
       , colors = (lightColor, darkColor)
       , xBounds = (box.x, box.x + box.w)
       , textOptions =
-          { color = fromColor opaque <| fromRGB (119, 119, 119)
+          { color = textColor
           , size = 12
           }
       }
@@ -331,7 +330,7 @@ grid box labels (l, u) step (lw, lh) =
       , colors = (lightColor, darkColor)
       , yBounds = (box.y, box.y + box.h)
       , textOptions =
-          { color = fromColor opaque <| fromRGB (119, 119, 119)
+          { color = textColor
           , size = 12
           , rotation = -50
           }
@@ -428,13 +427,16 @@ lineChart (LineChartOptionsC options) data toMsg (ChartModelC model) =
         (bounds, step) = calculateLimits (labelledData.min, labelledData.max)
 
         chartBox =
-          { w = 0.9 * toFloat w
-          , h = 0.95 * toFloat h - toFloat (if lw > lh then lw else lh)
-          , x = 0.05 * toFloat w
+          let
+            maxLabelDimension = toFloat <| if lw > lh then lw else lh
+          in
+          { w = 0.95 * toFloat w - maxLabelDimension
+          , h = 0.95 * toFloat h - maxLabelDimension
+          , x = maxLabelDimension
           , y = 0.05 * toFloat h
           }
         chartPointSets = toChartPoints chartBox labelledData.length bounds chartHeights
-        grids = grid chartBox labelledData.labels bounds step (toFloat lw, toFloat lh)
+        grids = grid chartBox labelledData.labels bounds step
         lines = map2 (\color chartPoints ->
           let
             pointsString = map (\cp -> String.fromFloat cp.x ++ "," ++ String.fromFloat cp.y) chartPoints
