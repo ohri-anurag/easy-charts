@@ -15,7 +15,8 @@ module LineChart exposing
   , setTooltipWidth
   , setTooltipHeight
   , setLabelWidth
-  , setLabelHeight
+  , setLabelRotation
+  , setValueWidth
   , setPointRadius
   )
 
@@ -34,7 +35,7 @@ NOTE: Go through the Setup section initially. It is required to get the tooltip 
 @docs lineChart
 
 # Configuring
-@docs LineChartOptions, defaultLineChartOptions, setChartWidth, setChartHeight, setTooltipWidth, setTooltipHeight, setLabelWidth, setLabelHeight, setPointRadius
+@docs LineChartOptions, defaultLineChartOptions, setChartWidth, setChartHeight, setTooltipWidth, setTooltipHeight, setLabelWidth, setLabelRotation, setValueWidth, setPointRadius
 -}
 
 import Html exposing (Html)
@@ -45,9 +46,10 @@ import Svg exposing (Svg, circle, g, rect, svg, text, text_)
 import Svg.Attributes as SA
 import String exposing (fromFloat)
 import TransparentColor exposing (..)
-import LineChart.Lines as L
 import LineChart.Horizontals as H
-import LineChart.Types exposing (ChartPoint)
+import LineChart.Legend exposing (legends)
+import LineChart.Lines as L
+import LineChart.Types exposing (Box, ChartPoint)
 import LineChart.Verticals as V
 import SolidColor exposing (fromRGB)
 import String exposing (fromInt)
@@ -210,13 +212,6 @@ findMinMax list =
         (if b < min then b else min, if b > max then b else max)
         ) (a, a) rest |> Just
 
-type alias Box =
-  { w : Float
-  , h : Float
-  , x : Float
-  , y : Float
-  }
-
 tooltip : Float -> Float -> Float -> Int -> HoveredPoint -> Svg msg
 tooltip w h cw pointRadius hp =
   let
@@ -281,11 +276,10 @@ getFilteredLabels width labels =
       then (0, [])
       else helper 0
 
-grid : Box -> List String -> (Float, Float) -> Float -> List (Svg msg)
-grid box labels (l, u) step =
+grid : Box -> List String -> (Float, Float) -> Float -> Maybe Int -> List (Svg msg)
+grid box labels (l, u) step rotation =
   let
     lightColor = fromColor opaque <| fromRGB (204, 204, 204)
-    darkColor = fromColor opaque <| fromRGB (170, 170, 170)
     textColor = fromColor opaque <| fromRGB (119, 119, 119)
     numH = (u - l) / step |> round
     dy = box.h / toFloat numH
@@ -296,23 +290,24 @@ grid box labels (l, u) step =
       { begin = box.y + box.h
       , step = -dy
       , labels = map (\i -> l + toFloat i * step |> fromFloat) (range 0 numH)
-      , colors = (lightColor, darkColor)
+      , color = lightColor
       , xBounds = (box.x, box.x + box.w)
       , textOptions =
           { color = textColor
           , size = 12
+          , rotation = Nothing
           }
       }
     vlines2 = V.grid
       { begin = box.x
       , step = dx * toFloat n
       , labels = filteredLabels
-      , colors = (lightColor, darkColor)
+      , color = lightColor
       , yBounds = (box.y, box.y + box.h)
       , textOptions =
           { color = textColor
           , size = 12
-          , rotation = -50
+          , rotation = rotation
           }
       }
   in
@@ -431,28 +426,46 @@ lineChart (LineChartOptionsC options) data toMsg (ChartModelC model) =
     labelledDataMaybe = processInputData data
     (w, h) = toPair options.chartDimensions
     (tw, th) = toPair options.tooltipDimensions
-    (lw, lh) = toPair options.labelDimensions
+    labelWidth = toFloat options.labelWidth
   in
   case labelledDataMaybe of
     Nothing -> svg [] []
     Just labelledData ->
       let
         (bounds, step) = calculateLimits (labelledData.min, labelledData.max)
+        (lw, lh) = case options.labelRotation of
+          Nothing -> (labelWidth/2, 0.05 * toFloat h)
+          Just rot ->
+            let
+              hypotenuse = sqrt (2500 + labelWidth * labelWidth)
+              dr = abs rot |> toFloat >> degrees
+            in
+              (hypotenuse * cos dr, hypotenuse * sin dr)
+        vw = toFloat options.valueWidth
+        maxW = if lw > vw then lw else vw
         chartBox =
-          let
-            maxLabelDimension = toFloat <| if lw > lh then lw else lh
-          in
-          { w = 0.95 * toFloat w - maxLabelDimension
-          , h = 0.95 * toFloat h - maxLabelDimension
-          , x = maxLabelDimension
+          { w = 0.95 * toFloat w - maxW
+          , h = 0.95 * toFloat h - lh
+          , x = maxW
           , y = 0.05 * toFloat h
           }
-        grids = grid chartBox labelledData.labels bounds step
+        legendBox =
+          { w = chartBox.w
+          , h = 0.05 * toFloat h
+          , x = chartBox.x
+          , y = 0
+          }
+        grids = grid chartBox labelledData.labels bounds step options.labelRotation
         points = indexedMap (plotline chartBox labelledData.length bounds toMsg hoverClass) labelledData.labelledDataSets
           |> concat
+        legend = legends legendBox
+          { data = map (\lds -> (lds.color, lds.label)) labelledData.labelledDataSets
+          , width = 100
+          , spacing = 50
+          }
       in
       svg [w |> String.fromInt >> SA.width, h |> String.fromInt >> SA.height, HA.style "font-family" "sans-serif"]
-        <| grids ++ points ++ filterMap (Maybe.map (tooltip (toFloat tw) (toFloat th) (toFloat w) options.pointRadius)) [ model.hovered ]
+        <| legend ++ grids ++ points ++ filterMap (Maybe.map (tooltip (toFloat tw) (toFloat th) (toFloat w) options.pointRadius)) [ model.hovered ]
 
 {-|
 Used to configure the line chart.
@@ -463,7 +476,9 @@ type LineChartOptions
 type alias LineChartOptionsR =
   { chartDimensions : Dimensions
   , tooltipDimensions : Dimensions
-  , labelDimensions : Dimensions
+  , labelWidth : Int
+  , labelRotation : Maybe Int
+  , valueWidth : Int
   , pointRadius : Int
   }
 
@@ -504,10 +519,9 @@ defaultLineChartOptions = LineChartOptionsC
     { width = 120
     , height = 50
     }
-  , labelDimensions =
-    { width = 100
-    , height = 50
-    }
+  , valueWidth = 100
+  , labelWidth = 100
+  , labelRotation = Nothing
   , pointRadius = 2
   }
 
@@ -544,14 +558,23 @@ Set the Label Width.
 -}
 setLabelWidth : Int -> LineChartOptions -> LineChartOptions
 setLabelWidth lw (LineChartOptionsC options) = LineChartOptionsC
-  { options | labelDimensions = setWidth lw options.labelDimensions }
+  { options | labelWidth = lw }
 
 {-|
-Set the Label Height.
+Set the Value Width.
 -}
-setLabelHeight : Int -> LineChartOptions -> LineChartOptions
-setLabelHeight lh (LineChartOptionsC options) = LineChartOptionsC
-  { options | labelDimensions = setHeight lh options.labelDimensions }
+setValueWidth : Int -> LineChartOptions -> LineChartOptions
+setValueWidth vw (LineChartOptionsC options) = LineChartOptionsC
+  { options | valueWidth = vw }
+
+{-|
+Set the Label Rotation.
+1. If you provide rotation value (even if it is `Just 0`), label will be rotated from its end, counter-clockwise.
+2. If you don't provide a value (Nothing), label will be center aligned with its axis.
+-}
+setLabelRotation : Maybe Int -> LineChartOptions -> LineChartOptions
+setLabelRotation lr (LineChartOptionsC options) = LineChartOptionsC
+  { options | labelRotation = lr }
 
 {-|
 Set the point radius on the chart. Hovered points double their radius.

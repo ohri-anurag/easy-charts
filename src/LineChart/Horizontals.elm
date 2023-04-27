@@ -5,17 +5,15 @@ import LineChart.Lines exposing (line)
 import List exposing (..)
 import Svg exposing (Svg)
 import TransparentColor exposing (TransparentColor)
+import LineChart.Types exposing (TextOptions)
 
 type alias HorizontalGridOptions =
   { begin : Float
   , step : Float
   , labels : List String
   , xBounds : (Float, Float)
-  , colors : (TransparentColor, TransparentColor)
-  , textOptions :
-    { color : TransparentColor
-    , size : Int
-    }
+  , color : TransparentColor
+  , textOptions : TextOptions
   }
 
 type alias HLineOptions =
@@ -28,7 +26,6 @@ type alias HLineOptions =
 grid : HorizontalGridOptions -> List (Svg msg)
 grid options =
   let
-    (light, dark) = options.colors
     (x1, x2) = options.xBounds
     yth i = options.begin + toFloat i * options.step
     x3 = x1 - 10
@@ -40,22 +37,21 @@ grid options =
       , y1 = yth i
       , x2 = x2
       , y2 = yth i
-      , stroke = if i == 0 then dark else light
+      , stroke = options.color
       }
     , line
       { x1 = x3
       , y1 = yth i
       , x2 = x1
       , y2 = yth i
-      , stroke = light
+      , stroke = options.color
       }
     , createLabel
       { x = x4
       , y = yth i
       , label = label
-      , color = options.textOptions.color
-      , size = options.textOptions.size
-      , rotation = Nothing
+      , textOptions = options.textOptions
+      , anchor = "end"
       }
     ]
     ) options.labels |> concat
