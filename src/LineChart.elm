@@ -576,12 +576,13 @@ setValueWidth vw (LineChartOptionsC options) = LineChartOptionsC
 
 {-|
 Set the Label Rotation in degrees.
-1. If you provide rotation value (even if it is `Just 0`), label will be rotated from its end, counter-clockwise.
-2. If you don't provide a value (Nothing), label will be center aligned with its axis.
+
+1. If you set the label rotation (even if it is `0`), label will be rotated from its end, counter-clockwise.
+2. If you don't set the label rotation (by not invoking this function), label will be center aligned with its axis, which is the default.
 -}
-setLabelRotation : Maybe Int -> LineChartOptions -> LineChartOptions
+setLabelRotation : Int -> LineChartOptions -> LineChartOptions
 setLabelRotation lr (LineChartOptionsC options) = LineChartOptionsC
-  { options | labelRotation = lr }
+  { options | labelRotation = Just lr }
 
 {-|
 Set the point radius on the chart. Hovered points double their radius.

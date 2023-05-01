@@ -6823,12 +6823,11 @@ var $author$project$LineChart$setLabelRotation = F2(
 		return $author$project$LineChart$LineChartOptionsC(
 			_Utils_update(
 				options,
-				{labelRotation: lr}));
+				{
+					labelRotation: $elm$core$Maybe$Just(lr)
+				}));
 	});
-var $author$project$Main$options = A2(
-	$author$project$LineChart$setLabelRotation,
-	$elm$core$Maybe$Just(-50),
-	$author$project$Main$commonOptions);
+var $author$project$Main$options = A2($author$project$LineChart$setLabelRotation, -50, $author$project$Main$commonOptions);
 var $author$project$LineChart$setTooltipWidth = F2(
 	function (tw, _v0) {
 		var options = _v0.a;

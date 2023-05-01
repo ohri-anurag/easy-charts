@@ -70,7 +70,7 @@ data =
 
 options : LineChartOptions
 options = commonOptions
-  |> setLabelRotation (Just -50)
+  |> setLabelRotation -50
 
 data2 : LineChartData
 data2 =
