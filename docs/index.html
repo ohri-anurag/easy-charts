@@ -4393,7 +4393,12 @@ var $author$project$LineChart$ChartModelC = function (a) {
 var $elm$core$Maybe$Nothing = {$: 'Nothing'};
 var $author$project$LineChart$initChartModel = $author$project$LineChart$ChartModelC(
 	{hovered: $elm$core$Maybe$Nothing});
-var $author$project$Main$init = {chartModel1: $author$project$LineChart$initChartModel, chartModel2: $author$project$LineChart$initChartModel, chartModel3: $author$project$LineChart$initChartModel, chartModel4: $author$project$LineChart$initChartModel, chartModel5: $author$project$LineChart$initChartModel};
+var $author$project$PieChart$PieModelC = function (a) {
+	return {$: 'PieModelC', a: a};
+};
+var $author$project$PieChart$initPieModel = $author$project$PieChart$PieModelC(
+	{hovered: $elm$core$Maybe$Nothing});
+var $author$project$Main$init = {chartModel1: $author$project$LineChart$initChartModel, chartModel2: $author$project$LineChart$initChartModel, chartModel3: $author$project$LineChart$initChartModel, chartModel4: $author$project$LineChart$initChartModel, chartModel5: $author$project$LineChart$initChartModel, pieModel1: $author$project$PieChart$initPieModel};
 var $elm$core$Basics$EQ = {$: 'EQ'};
 var $elm$core$Basics$GT = {$: 'GT'};
 var $elm$core$Basics$LT = {$: 'LT'};
@@ -5218,6 +5223,24 @@ var $author$project$LineChart$updateChartModel = F2(
 					}));
 		}
 	});
+var $author$project$PieChart$updatePieModel = F2(
+	function (msg, _v0) {
+		var model = _v0.a;
+		if (msg.$ === 'Focus') {
+			var arc = msg.a;
+			return $author$project$PieChart$PieModelC(
+				_Utils_update(
+					model,
+					{
+						hovered: $elm$core$Maybe$Just(arc)
+					}));
+		} else {
+			return $author$project$PieChart$PieModelC(
+				_Utils_update(
+					model,
+					{hovered: $elm$core$Maybe$Nothing}));
+		}
+	});
 var $author$project$Main$update = F2(
 	function (msg, model) {
 		switch (msg.$) {
@@ -5256,6 +5279,13 @@ var $author$project$Main$update = F2(
 					{
 						chartModel5: A2($author$project$LineChart$updateChartModel, chartMsg, model.chartModel5)
 					});
+			case 'PieMessage1':
+				var pieMsg = msg.a;
+				return _Utils_update(
+					model,
+					{
+						pieModel1: A2($author$project$PieChart$updatePieModel, pieMsg, model.pieModel1)
+					});
 			default:
 				return model;
 		}
@@ -5275,30 +5305,18 @@ var $author$project$Main$ChartMessage4 = function (a) {
 var $author$project$Main$ChartMessage5 = function (a) {
 	return {$: 'ChartMessage5', a: a};
 };
-var $author$project$LineChart$LineChartDataC = function (a) {
-	return {$: 'LineChartDataC', a: a};
+var $author$project$PieChart$PieChartDataC = function (a) {
+	return {$: 'PieChartDataC', a: a};
 };
-var $author$project$LineChart$createData = F2(
-	function (labels, datasets) {
-		return $author$project$LineChart$LineChartDataC(
-			{dataSets: datasets, labels: labels});
-	});
-var $author$project$LineChart$LineChartDataSetC = function (a) {
-	return {$: 'LineChartDataSetC', a: a};
+var $author$project$PieChart$PieChartOptionsC = function (a) {
+	return {$: 'PieChartOptionsC', a: a};
 };
-var $author$project$LineChart$createDataSet = F3(
-	function (label, heights, color) {
-		return $author$project$LineChart$LineChartDataSetC(
-			{color: color, heights: heights, label: label});
-	});
-var $tesk9$palette$TransparentColor$Color = function (a) {
+var $author$project$Main$PieMessage1 = function (a) {
+	return {$: 'PieMessage1', a: a};
+};
+var $tesk9$palette$SolidColor$Color = function (a) {
 	return {$: 'Color', a: a};
 };
-var $elm$core$Basics$composeR = F3(
-	function (f, g, x) {
-		return g(
-			f(x));
-	});
 var $tesk9$palette$Internal$Color$RGBA = function (a) {
 	return {$: 'RGBA', a: a};
 };
@@ -5326,6 +5344,55 @@ var $tesk9$palette$Internal$Color$fromRGBA = function (values) {
 	return $tesk9$palette$Internal$Color$RGBA(
 		$tesk9$palette$Internal$RGBA$fromChannels(values));
 };
+var $tesk9$palette$Internal$Opacity$Opacity = function (a) {
+	return {$: 'Opacity', a: a};
+};
+var $elm$core$Basics$composeL = F3(
+	function (g, f, x) {
+		return g(
+			f(x));
+	});
+var $tesk9$palette$Internal$Opacity$custom = A2(
+	$elm$core$Basics$composeL,
+	$tesk9$palette$Internal$Opacity$Opacity,
+	A2($elm$core$Basics$clamp, 0, 1.0));
+var $tesk9$palette$Internal$Opacity$opaque = $tesk9$palette$Internal$Opacity$custom(1.0);
+var $tesk9$palette$SolidColor$fromRGB = function (_v0) {
+	var red = _v0.a;
+	var green = _v0.b;
+	var blue = _v0.c;
+	return $tesk9$palette$SolidColor$Color(
+		$tesk9$palette$Internal$Color$fromRGBA(
+			{alpha: $tesk9$palette$Internal$Opacity$opaque, blue: blue, green: green, red: red}));
+};
+var $tesk9$palette$Palette$X11$aquamarine = $tesk9$palette$SolidColor$fromRGB(
+	_Utils_Tuple3(127, 255, 212));
+var $tesk9$palette$Palette$X11$blue = $tesk9$palette$SolidColor$fromRGB(
+	_Utils_Tuple3(0, 0, 255));
+var $author$project$LineChart$LineChartDataC = function (a) {
+	return {$: 'LineChartDataC', a: a};
+};
+var $author$project$LineChart$createData = F2(
+	function (labels, datasets) {
+		return $author$project$LineChart$LineChartDataC(
+			{dataSets: datasets, labels: labels});
+	});
+var $author$project$LineChart$LineChartDataSetC = function (a) {
+	return {$: 'LineChartDataSetC', a: a};
+};
+var $author$project$LineChart$createDataSet = F3(
+	function (label, heights, color) {
+		return $author$project$LineChart$LineChartDataSetC(
+			{color: color, heights: heights, label: label});
+	});
+var $tesk9$palette$TransparentColor$Color = function (a) {
+	return {$: 'Color', a: a};
+};
+var $elm$core$Basics$composeR = F3(
+	function (f, g, x) {
+		return g(
+			f(x));
+	});
 var $tesk9$palette$TransparentColor$fromRGBA = A2($elm$core$Basics$composeR, $tesk9$palette$Internal$Color$fromRGBA, $tesk9$palette$TransparentColor$Color);
 var $elm$core$Basics$negate = function (n) {
 	return -n;
@@ -5420,30 +5487,6 @@ var $tesk9$palette$TransparentColor$fromColor = F2(
 		return $tesk9$palette$TransparentColor$fromRGBA(
 			{alpha: opacity, blue: b, green: g, red: r});
 	});
-var $tesk9$palette$SolidColor$Color = function (a) {
-	return {$: 'Color', a: a};
-};
-var $tesk9$palette$Internal$Opacity$Opacity = function (a) {
-	return {$: 'Opacity', a: a};
-};
-var $elm$core$Basics$composeL = F3(
-	function (g, f, x) {
-		return g(
-			f(x));
-	});
-var $tesk9$palette$Internal$Opacity$custom = A2(
-	$elm$core$Basics$composeL,
-	$tesk9$palette$Internal$Opacity$Opacity,
-	A2($elm$core$Basics$clamp, 0, 1.0));
-var $tesk9$palette$Internal$Opacity$opaque = $tesk9$palette$Internal$Opacity$custom(1.0);
-var $tesk9$palette$SolidColor$fromRGB = function (_v0) {
-	var red = _v0.a;
-	var green = _v0.b;
-	var blue = _v0.c;
-	return $tesk9$palette$SolidColor$Color(
-		$tesk9$palette$Internal$Color$fromRGBA(
-			{alpha: $tesk9$palette$Internal$Opacity$opaque, blue: blue, green: green, red: red}));
-};
 var $tesk9$palette$Palette$X11$green = $tesk9$palette$SolidColor$fromRGB(
 	_Utils_Tuple3(0, 128, 0));
 var $tesk9$palette$TransparentColor$opaque = $tesk9$palette$Internal$Opacity$opaque;
@@ -5614,8 +5657,6 @@ var $author$project$Main$data = A2(
 				$author$project$Main$rawData),
 			A2($tesk9$palette$TransparentColor$fromColor, $tesk9$palette$TransparentColor$opaque, $tesk9$palette$Palette$X11$green))
 		]));
-var $tesk9$palette$Palette$X11$blue = $tesk9$palette$SolidColor$fromRGB(
-	_Utils_Tuple3(0, 0, 255));
 var $tesk9$palette$Palette$X11$red = $tesk9$palette$SolidColor$fromRGB(
 	_Utils_Tuple3(255, 0, 0));
 var $author$project$Main$data2 = A2(
@@ -5637,8 +5678,6 @@ var $author$project$Main$data2 = A2(
 				[23, 22, 21, 22, 23]),
 			A2($tesk9$palette$TransparentColor$fromColor, $tesk9$palette$TransparentColor$opaque, $tesk9$palette$Palette$X11$red))
 		]));
-var $tesk9$palette$Palette$X11$aquamarine = $tesk9$palette$SolidColor$fromRGB(
-	_Utils_Tuple3(127, 255, 212));
 var $tesk9$palette$Palette$X11$brown = $tesk9$palette$SolidColor$fromRGB(
 	_Utils_Tuple3(165, 42, 42));
 var $author$project$Main$data3 = A2(
@@ -6756,6 +6795,8 @@ var $author$project$LineChart$lineChart = F4(
 									[model.hovered]))))));
 		}
 	});
+var $tesk9$palette$Palette$X11$magenta = $tesk9$palette$SolidColor$fromRGB(
+	_Utils_Tuple3(255, 0, 255));
 var $author$project$LineChart$LineChartOptionsC = function (a) {
 	return {$: 'LineChartOptionsC', a: a};
 };
@@ -6864,6 +6905,413 @@ var $author$project$Main$options5 = A2(
 	$author$project$LineChart$setTooltipWidth,
 	210,
 	A2($author$project$LineChart$setPointRadius, 2, $author$project$Main$commonOptions));
+var $author$project$PieChart$Blur = {$: 'Blur'};
+var $author$project$PieChart$Cartesian = function (a) {
+	return {$: 'Cartesian', a: a};
+};
+var $author$project$PieChart$Chart = function (a) {
+	return {$: 'Chart', a: a};
+};
+var $author$project$PieChart$Focus = function (a) {
+	return {$: 'Focus', a: a};
+};
+var $tesk9$palette$Internal$Color$HSLA = function (a) {
+	return {$: 'HSLA', a: a};
+};
+var $tesk9$palette$Internal$HSLA$Color = function (a) {
+	return {$: 'Color', a: a};
+};
+var $tesk9$palette$Internal$HSLA$fromChannels = function (_v0) {
+	var hue = _v0.hue;
+	var saturation = _v0.saturation;
+	var lightness = _v0.lightness;
+	var alpha = _v0.alpha;
+	var hueInt = $elm$core$Basics$floor(hue);
+	var hue360 = A2($elm$core$Basics$modBy, 360, hueInt);
+	var floatingHueValues = hue - hueInt;
+	return $tesk9$palette$Internal$HSLA$Color(
+		{
+			alpha: alpha,
+			hue: hue360 + floatingHueValues,
+			lightness: A3($elm$core$Basics$clamp, 0, 100, lightness),
+			saturation: A3($elm$core$Basics$clamp, 0, 100, saturation)
+		});
+};
+var $tesk9$palette$Internal$HSLA$fromRGBA = function (_v0) {
+	var red = _v0.red;
+	var green = _v0.green;
+	var blue = _v0.blue;
+	var alpha = _v0.alpha;
+	var _v1 = _Utils_Tuple3(red / 255, green / 255, blue / 255);
+	var r = _v1.a;
+	var g = _v1.b;
+	var b = _v1.c;
+	var maximum = A2(
+		$elm$core$Basics$max,
+		A2($elm$core$Basics$max, r, g),
+		b);
+	var minimum = A2(
+		$elm$core$Basics$min,
+		A2($elm$core$Basics$min, r, g),
+		b);
+	var chroma = maximum - minimum;
+	var hue = (!chroma) ? 0 : (_Utils_eq(maximum, r) ? ((60 * (g - b)) / chroma) : (_Utils_eq(maximum, g) ? (60 * (((b - r) / chroma) + 2)) : (60 * (((r - g) / chroma) + 4))));
+	var lightness = (minimum + maximum) / 2;
+	var saturation = ((lightness === 1) || (!lightness)) ? 0 : (chroma / (1 - $elm$core$Basics$abs((2 * lightness) - 1)));
+	return $tesk9$palette$Internal$HSLA$fromChannels(
+		{alpha: alpha, hue: hue, lightness: lightness * 100, saturation: saturation * 100});
+};
+var $tesk9$palette$Internal$Color$convertRGBAToHSL = function (color) {
+	return $tesk9$palette$Internal$Color$HSLA(
+		$tesk9$palette$Internal$HSLA$fromRGBA(
+			$tesk9$palette$Internal$RGBA$toChannels(color)));
+};
+var $tesk9$palette$Internal$Color$asHSLA = function (color) {
+	asHSLA:
+	while (true) {
+		if (color.$ === 'HSLA') {
+			var values = color.a;
+			return values;
+		} else {
+			var rgbValues = color.a;
+			var $temp$color = $tesk9$palette$Internal$Color$convertRGBAToHSL(rgbValues);
+			color = $temp$color;
+			continue asHSLA;
+		}
+	}
+};
+var $tesk9$palette$Internal$Color$fromHSLA = function (values) {
+	return $tesk9$palette$Internal$Color$HSLA(
+		$tesk9$palette$Internal$HSLA$fromChannels(values));
+};
+var $tesk9$palette$Internal$Color$addLightness = F2(
+	function (percentage, color) {
+		var hsla = $tesk9$palette$Internal$HSLA$toChannels(
+			$tesk9$palette$Internal$Color$asHSLA(color));
+		var lightness = hsla.lightness;
+		return $tesk9$palette$Internal$Color$fromHSLA(
+			_Utils_update(
+				hsla,
+				{lightness: lightness + percentage}));
+	});
+var $tesk9$palette$TransparentColor$addLightness = F2(
+	function (percentage, _v0) {
+		var color = _v0.a;
+		return $tesk9$palette$TransparentColor$Color(
+			A2($tesk9$palette$Internal$Color$addLightness, percentage, color));
+	});
+var $elm$svg$Svg$Attributes$d = _VirtualDom_attribute('d');
+var $elm$core$Basics$atan = _Basics_atan;
+var $elm$core$Basics$ge = _Utils_ge;
+var $author$project$PieChart$getAngle = function (_v0) {
+	var x = _v0.a.x;
+	var y = _v0.a.y;
+	var angle = $elm$core$Basics$atan(y / x);
+	return (x >= 0) ? ((y >= 0) ? angle : ((2 * $elm$core$Basics$pi) + angle)) : ($elm$core$Basics$pi + angle);
+};
+var $elm$svg$Svg$path = $elm$svg$Svg$trustedNode('path');
+var $author$project$PieChart$polarToCartesian = function (_v0) {
+	var r = _v0.a;
+	var theta = _v0.b;
+	return $author$project$PieChart$Cartesian(
+		{
+			x: r * $elm$core$Basics$cos(theta),
+			y: r * $elm$core$Basics$sin(theta)
+		});
+};
+var $elm$core$List$sortBy = _List_sortBy;
+var $elm$core$List$sum = function (numbers) {
+	return A3($elm$core$List$foldl, $elm$core$Basics$add, 0, numbers);
+};
+var $author$project$PieChart$toCartesian = function (_v0) {
+	var x = _v0.a;
+	var y = _v0.b;
+	return $author$project$PieChart$Cartesian(
+		{x: x, y: y});
+};
+var $author$project$PieChart$toCartesianCoordinate = F2(
+	function (_v0, _v1) {
+		var origin = _v0.a;
+		var point = _v1.a;
+		var y = origin.y - point.y;
+		var x = point.x - origin.x;
+		return $author$project$PieChart$Cartesian(
+			{x: x, y: y});
+	});
+var $author$project$PieChart$toChartCoordinates = F2(
+	function (_v0, _v1) {
+		var origin = _v0.a;
+		var point = _v1.a;
+		var y = origin.y - point.y;
+		var x = origin.x + point.x;
+		return $author$project$PieChart$Chart(
+			{x: x, y: y});
+	});
+var $author$project$PieChart$tooltip = function (options) {
+	var y = options.point.y;
+	var x = options.point.x;
+	var tw = options.width;
+	var th = options.height;
+	return A2(
+		$elm$svg$Svg$g,
+		_List_fromArray(
+			[
+				$elm$svg$Svg$Attributes$fill('white'),
+				A2($elm$html$Html$Attributes$style, 'font-size', '14px'),
+				$elm$svg$Svg$Attributes$dominantBaseline('middle'),
+				$elm$svg$Svg$Attributes$textAnchor('middle')
+			]),
+		_List_fromArray(
+			[
+				A2(
+				$elm$svg$Svg$rect,
+				_List_fromArray(
+					[
+						A3($elm$core$Basics$composeR, $elm$core$String$fromFloat, $elm$svg$Svg$Attributes$width, tw),
+						A3($elm$core$Basics$composeR, $elm$core$String$fromFloat, $elm$svg$Svg$Attributes$height, th),
+						$elm$svg$Svg$Attributes$rx('10'),
+						$elm$svg$Svg$Attributes$fill('rgba(0,0,0,0.7)'),
+						A3($elm$core$Basics$composeR, $elm$core$String$fromFloat, $elm$svg$Svg$Attributes$x, x - (tw / 2)),
+						A3($elm$core$Basics$composeR, $elm$core$String$fromFloat, $elm$svg$Svg$Attributes$y, y - (th / 2))
+					]),
+				_List_Nil),
+				A2(
+				$elm$svg$Svg$text_,
+				_List_fromArray(
+					[
+						A3($elm$core$Basics$composeR, $elm$core$String$fromFloat, $elm$svg$Svg$Attributes$x, x),
+						A3($elm$core$Basics$composeR, $elm$core$String$fromFloat, $elm$svg$Svg$Attributes$y, y + (th / 4)),
+						A2($elm$html$Html$Attributes$style, 'fontWeight', 'bold')
+					]),
+				_List_fromArray(
+					[
+						$elm$svg$Svg$text(
+						$elm$core$String$fromFloat(options.percentage) + '%')
+					])),
+				A2(
+				$elm$svg$Svg$text_,
+				_List_fromArray(
+					[
+						A3($elm$core$Basics$composeR, $elm$core$String$fromFloat, $elm$svg$Svg$Attributes$x, x),
+						A3($elm$core$Basics$composeR, $elm$core$String$fromFloat, $elm$svg$Svg$Attributes$y, y - (th / 4))
+					]),
+				_List_fromArray(
+					[
+						$elm$svg$Svg$text(
+						options.label + (': ' + $elm$core$String$fromFloat(options.value)))
+					]))
+			]));
+};
+var $author$project$PieChart$translate = F2(
+	function (_v0, _v1) {
+		var dx = _v0.a;
+		var dy = _v0.b;
+		var x = _v1.a.x;
+		var y = _v1.a.y;
+		return $author$project$PieChart$Cartesian(
+			{x: x + dx, y: y + dy});
+	});
+var $author$project$PieChart$pieChart = F4(
+	function (_v0, _v1, toMsg, _v2) {
+		var options = _v0.a;
+		var data = _v1.a;
+		var model = _v2.a;
+		var tw = 100;
+		var w = (options.width - 20) - (2 * tw);
+		var total = $elm$core$List$sum(
+			A2(
+				$elm$core$List$map,
+				function ($) {
+					return $.value;
+				},
+				data));
+		var th = 50;
+		var sortedData = A2(
+			$elm$core$List$sortBy,
+			function ($) {
+				return $.value;
+			},
+			data);
+		var lineToPoint = function (_v9) {
+			var p = _v9.a;
+			return 'L ' + ($elm$core$String$fromFloat(p.x) + (',' + $elm$core$String$fromFloat(p.y)));
+		};
+		var h = (options.height - 20) - (2 * th);
+		var minDimension = (_Utils_cmp(w, h) < 0) ? w : h;
+		var r = minDimension / 2;
+		var dy = (th + 10) + ((h - (2 * r)) / 2);
+		var dx = (tw + 10) + ((w - (2 * r)) / 2);
+		var origin = $author$project$PieChart$Chart(
+			{x: dx + r, y: dy + r});
+		var hoveredSector = function (sector) {
+			var r2 = r + 5;
+			var eqAngle = F2(
+				function (a1, a2) {
+					return $elm$core$Basics$abs(a1 - a2) <= 0.0175;
+				});
+			var _v6 = A2($author$project$PieChart$toCartesianCoordinate, origin, sector.to);
+			var p2 = _v6.a;
+			var _v7 = A2($author$project$PieChart$toCartesianCoordinate, origin, sector.from);
+			var p1 = _v7.a;
+			var midPoint = {x: (p1.x + p2.x) / 2, y: (p1.y + p2.y) / 2};
+			var theta = $author$project$PieChart$getAngle(
+				$author$project$PieChart$Cartesian(midPoint));
+			var p = A2(eqAngle, theta, 0) ? A2(
+				$author$project$PieChart$translate,
+				_Utils_Tuple2(tw / 2, 0),
+				$author$project$PieChart$toCartesian(
+					_Utils_Tuple2(r2, 0))) : ((_Utils_cmp(theta, $elm$core$Basics$pi / 2) < 0) ? A2(
+				$author$project$PieChart$translate,
+				_Utils_Tuple2(tw / 2, th / 2),
+				$author$project$PieChart$polarToCartesian(
+					_Utils_Tuple2(r2, theta))) : (A2(eqAngle, theta, $elm$core$Basics$pi / 2) ? A2(
+				$author$project$PieChart$translate,
+				_Utils_Tuple2(0, th / 2),
+				$author$project$PieChart$toCartesian(
+					_Utils_Tuple2(0, r2))) : ((_Utils_cmp(theta, $elm$core$Basics$pi) < 0) ? A2(
+				$author$project$PieChart$translate,
+				_Utils_Tuple2((-tw) / 2, th / 2),
+				$author$project$PieChart$polarToCartesian(
+					_Utils_Tuple2(r2, theta))) : (A2(eqAngle, theta, $elm$core$Basics$pi) ? A2(
+				$author$project$PieChart$translate,
+				_Utils_Tuple2((-tw) / 2, 0),
+				$author$project$PieChart$toCartesian(
+					_Utils_Tuple2(-r2, 0))) : ((_Utils_cmp(theta, (3 / 2) * $elm$core$Basics$pi) < 0) ? A2(
+				$author$project$PieChart$translate,
+				_Utils_Tuple2((-tw) / 2, (-th) / 2),
+				$author$project$PieChart$polarToCartesian(
+					_Utils_Tuple2(r2, theta))) : (A2(eqAngle, theta, (3 * $elm$core$Basics$pi) / 2) ? A2(
+				$author$project$PieChart$translate,
+				_Utils_Tuple2(0, (-th) / 2),
+				$author$project$PieChart$toCartesian(
+					_Utils_Tuple2(0, -r2))) : A2(
+				$author$project$PieChart$translate,
+				_Utils_Tuple2(tw / 2, (-th) / 2),
+				$author$project$PieChart$polarToCartesian(
+					_Utils_Tuple2(r2, theta)))))))));
+			var _v8 = A2($author$project$PieChart$toChartCoordinates, origin, p);
+			var point = _v8.a;
+			return point;
+		};
+		var toTooltipOptions = function (sector) {
+			return {
+				height: th,
+				label: sector.datum.label,
+				percentage: (sector.datum.value * 100) / total,
+				point: hoveredSector(sector),
+				value: sector.datum.value,
+				width: tw
+			};
+		};
+		var sectors = A3(
+			$elm$core$List$foldl,
+			F2(
+				function (datum, _v5) {
+					var accumAngle = _v5.accumAngle;
+					var sectorList = _v5.sectorList;
+					var start = $author$project$PieChart$polarToCartesian(
+						_Utils_Tuple2(r, accumAngle));
+					var newAccumAngle = accumAngle - (((datum.value * 2) * $elm$core$Basics$pi) / total);
+					var to = $author$project$PieChart$polarToCartesian(
+						_Utils_Tuple2(r, newAccumAngle));
+					var newSector = {
+						datum: datum,
+						from: A2($author$project$PieChart$toChartCoordinates, origin, start),
+						to: A2($author$project$PieChart$toChartCoordinates, origin, to)
+					};
+					return {
+						accumAngle: newAccumAngle,
+						sectorList: A2($elm$core$List$cons, newSector, sectorList)
+					};
+				}),
+			{accumAngle: $elm$core$Basics$pi / 2, sectorList: _List_Nil},
+			sortedData).sectorList;
+		var cy = dy + r;
+		var cx = dx + r;
+		var lineToCentre = 'L ' + ($elm$core$String$fromFloat(cx) + (',' + $elm$core$String$fromFloat(cy)));
+		var moveToCentre = 'M ' + ($elm$core$String$fromFloat(cx) + (',' + $elm$core$String$fromFloat(cy)));
+		var arc = F2(
+			function (_v4, angle) {
+				var p = _v4.a;
+				return $elm$core$String$concat(
+					A2(
+						$elm$core$List$intersperse,
+						' ',
+						_List_fromArray(
+							[
+								'A ',
+								$elm$core$String$fromFloat(r),
+								$elm$core$String$fromFloat(r),
+								$elm$core$String$fromFloat(angle),
+								'0',
+								'1',
+								$elm$core$String$fromFloat(p.x),
+								$elm$core$String$fromFloat(p.y)
+							])));
+			});
+		var drawSector = function (sector) {
+			return A2(
+				$elm$svg$Svg$path,
+				_List_fromArray(
+					[
+						A3(
+						$elm$core$Basics$composeR,
+						$elm$core$List$intersperse(' '),
+						A2($elm$core$Basics$composeR, $elm$core$String$concat, $elm$svg$Svg$Attributes$d),
+						_List_fromArray(
+							[
+								moveToCentre,
+								lineToPoint(sector.from),
+								A2(arc, sector.to, (360 * sector.datum.value) / total),
+								lineToCentre
+							])),
+						$elm$svg$Svg$Attributes$stroke('white'),
+						$elm$svg$Svg$Attributes$strokeWidth('2'),
+						$elm$svg$Svg$Attributes$shapeRendering('geometricPrecision'),
+						A3(
+						$elm$core$Basics$composeR,
+						$tesk9$palette$TransparentColor$toRGBAString,
+						$elm$svg$Svg$Attributes$fill,
+						function () {
+							var _v3 = model.hovered;
+							if (_v3.$ === 'Nothing') {
+								return sector.datum.color;
+							} else {
+								var s = _v3.a;
+								return _Utils_eq(s, sector) ? A2($tesk9$palette$TransparentColor$addLightness, -10, sector.datum.color) : sector.datum.color;
+							}
+						}()),
+						$elm$html$Html$Events$onMouseOver(
+						toMsg(
+							$author$project$PieChart$Focus(sector))),
+						$elm$html$Html$Events$onMouseOut(
+						toMsg($author$project$PieChart$Blur))
+					]),
+				_List_Nil);
+		};
+		return A2(
+			$elm$html$Html$div,
+			_List_Nil,
+			_List_fromArray(
+				[
+					A2(
+					$elm$svg$Svg$svg,
+					_List_fromArray(
+						[
+							A3($elm$core$Basics$composeR, $elm$core$String$fromInt, $elm$svg$Svg$Attributes$width, options.width),
+							A3($elm$core$Basics$composeR, $elm$core$String$fromInt, $elm$svg$Svg$Attributes$height, options.height),
+							A2($elm$html$Html$Attributes$style, 'font-family', 'sans-serif')
+						]),
+					_Utils_ap(
+						A2($elm$core$List$map, drawSector, sectors),
+						A2(
+							$elm$core$List$filterMap,
+							$elm$core$Maybe$map(
+								A2($elm$core$Basics$composeR, toTooltipOptions, $author$project$PieChart$tooltip)),
+							_List_fromArray(
+								[model.hovered]))))
+				]));
+	});
 var $author$project$Main$view = function (model) {
 	return A2(
 		$elm$html$Html$div,
@@ -6874,7 +7322,42 @@ var $author$project$Main$view = function (model) {
 				A4($author$project$LineChart$lineChart, $author$project$Main$options2, $author$project$Main$data2, $author$project$Main$ChartMessage2, model.chartModel2),
 				A4($author$project$LineChart$lineChart, $author$project$Main$options3, $author$project$Main$data3, $author$project$Main$ChartMessage3, model.chartModel3),
 				A4($author$project$LineChart$lineChart, $author$project$Main$options4, $author$project$Main$data4, $author$project$Main$ChartMessage4, model.chartModel4),
-				A4($author$project$LineChart$lineChart, $author$project$Main$options5, $author$project$Main$data5, $author$project$Main$ChartMessage5, model.chartModel5)
+				A4($author$project$LineChart$lineChart, $author$project$Main$options5, $author$project$Main$data5, $author$project$Main$ChartMessage5, model.chartModel5),
+				A4(
+				$author$project$PieChart$pieChart,
+				$author$project$PieChart$PieChartOptionsC(
+					{height: 600, width: 600}),
+				$author$project$PieChart$PieChartDataC(
+					_List_fromArray(
+						[
+							{
+							color: A2($tesk9$palette$TransparentColor$fromColor, $tesk9$palette$TransparentColor$opaque, $tesk9$palette$Palette$X11$blue),
+							label: 'Q1',
+							value: 25
+						},
+							{
+							color: A2($tesk9$palette$TransparentColor$fromColor, $tesk9$palette$TransparentColor$opaque, $tesk9$palette$Palette$X11$red),
+							label: 'Q2',
+							value: 25
+						},
+							{
+							color: A2($tesk9$palette$TransparentColor$fromColor, $tesk9$palette$TransparentColor$opaque, $tesk9$palette$Palette$X11$green),
+							label: 'Q3',
+							value: 25
+						},
+							{
+							color: A2($tesk9$palette$TransparentColor$fromColor, $tesk9$palette$TransparentColor$opaque, $tesk9$palette$Palette$X11$aquamarine),
+							label: 'Q4',
+							value: 25
+						},
+							{
+							color: A2($tesk9$palette$TransparentColor$fromColor, $tesk9$palette$TransparentColor$opaque, $tesk9$palette$Palette$X11$magenta),
+							label: 'Q5',
+							value: 25
+						}
+						])),
+				$author$project$Main$PieMessage1,
+				model.pieModel1)
 			]));
 };
 var $author$project$Main$main = $elm$browser$Browser$sandbox(

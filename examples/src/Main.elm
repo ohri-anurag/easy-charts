@@ -8,6 +8,7 @@ import String exposing (fromFloat, fromInt)
 import TransparentColor exposing (fromColor, opaque)
 
 import LineChart exposing(..)
+import PieChart exposing(..)
 
 type alias Flags = { screenHeight : Int, screenWidth : Int }
 
@@ -17,6 +18,7 @@ type alias Model =
   , chartModel3: ChartModel
   , chartModel4: ChartModel
   , chartModel5: ChartModel
+  , pieModel1 : PieModel
   }
 
 type Msg
@@ -26,6 +28,7 @@ type Msg
   | ChartMessage3 ChartMsg
   | ChartMessage4 ChartMsg
   | ChartMessage5 ChartMsg
+  | PieMessage1 PieMsg
 
 init : Model
 init =
@@ -34,6 +37,7 @@ init =
   , chartModel3 = initChartModel
   , chartModel4 = initChartModel
   , chartModel5 = initChartModel
+  , pieModel1 = initPieModel
   }
 
 view : Model -> Html Msg
@@ -44,6 +48,16 @@ view model = div
   , lineChart options3 data3 ChartMessage3 model.chartModel3
   , lineChart options4 data4 ChartMessage4 model.chartModel4
   , lineChart options5 data5 ChartMessage5 model.chartModel5
+  , pieChart (PieChartOptionsC { width = 600, height = 600 })
+    (PieChartDataC
+      -- (map (\i -> { color = fromColor opaque blue , value = 25 , label = "Q1" }) (range 1 90))
+      [ { color = fromColor opaque blue , value = 25 , label = "Q1" }
+      , { color = fromColor opaque red , value = 25 , label = "Q2" }
+      , { color = fromColor opaque green , value = 25 , label = "Q3" }
+      , { color = fromColor opaque aquamarine , value = 25 , label = "Q4" }
+      , { color = fromColor opaque magenta , value = 25 , label = "Q5" }
+      ]
+    ) PieMessage1 model.pieModel1
   ]
 
 update : Msg -> Model -> Model
@@ -54,6 +68,7 @@ update msg model =
     ChartMessage3 chartMsg -> { model | chartModel3 = updateChartModel chartMsg model.chartModel3 }
     ChartMessage4 chartMsg -> { model | chartModel4 = updateChartModel chartMsg model.chartModel4 }
     ChartMessage5 chartMsg -> { model | chartModel5 = updateChartModel chartMsg model.chartModel5 }
+    PieMessage1 pieMsg -> { model | pieModel1 = updatePieModel pieMsg model.pieModel1 }
     NoOp -> model
 
 commonOptions : LineChartOptions
