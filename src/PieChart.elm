@@ -7,13 +7,14 @@ This module is used for creating Pie/Doughnut Charts.
 import Html
 import Html.Attributes as HA
 import Html.Events exposing (onMouseOver, onMouseOut)
-import LineChart.Types exposing (ChartPoint)
+import LineChart.Lines exposing (line, ShapeRendering(..))
 import List exposing (..)
+import Palette.X11 exposing (white)
 import String exposing (fromFloat, fromInt)
 import Svg
 import Svg.Attributes as SA
 import TransparentColor exposing (TransparentColor, toRGBAString)
-import TransparentColor exposing (addLightness)
+import TransparentColor exposing (addLightness, fromColor, opaque)
 
 type PieModel =
   PieModelC PieModelR
@@ -60,9 +61,9 @@ toPairs xs =
     (_ :: rest) -> map2 Tuple.pair xs rest
 
 type alias Sector =
-  { from : ChartCoordinate
-  , to : ChartCoordinate
-  , datum : PieChartDatum
+  { datum : PieChartDatum
+  , beginAngle : Float
+  , endAngle : Float
   }
 
 type alias TooltipOptions =
@@ -134,15 +135,13 @@ pieChart (PieChartOptionsC options) (PieChartDataC data) toMsg (PieModelC model)
     total = sum <| map .value data
 
     sectors : List Sector
-    sectors = .sectorList <| foldl (\datum {accumAngle, sectorList} ->
+    sectors = reverse <| .sectorList <| foldl (\datum {accumAngle, sectorList} ->
         let
           newAccumAngle = accumAngle - (datum.value * 2 * pi / total)
-          start = polarToCartesian (r, accumAngle)
-          to = polarToCartesian (r, newAccumAngle)
           newSector =
-            { from = toChartCoordinates origin start
-            , to = toChartCoordinates origin to
-            , datum = datum
+            { datum = datum
+            , beginAngle = accumAngle
+            , endAngle = newAccumAngle
             }
         in
         { accumAngle = newAccumAngle
@@ -150,65 +149,79 @@ pieChart (PieChartOptionsC options) (PieChartDataC data) toMsg (PieModelC model)
         }
       ) { accumAngle = pi/2, sectorList = [] } sortedData
 
-    moveToCentre = "M " ++ fromFloat cx ++ "," ++ fromFloat cy
-    lineToPoint (Chart p) = "L " ++ fromFloat p.x ++ "," ++ fromFloat p.y
-    arc (Chart p) angle = intersperse " " [ "A ", fromFloat r, fromFloat r, fromFloat angle, "0", "1", fromFloat p.x, fromFloat p.y ] |> String.concat
+    moveTo (Chart p) = "M " ++ fromFloat p.x ++ "," ++ fromFloat p.y
+    moveToCentre = moveTo origin
+    lineTo (Chart p) = "L " ++ fromFloat p.x ++ "," ++ fromFloat p.y
+    arc (Chart p) angle direction = intersperse " " [ "A", fromFloat r, fromFloat r, fromFloat angle, "0", fromInt direction, fromFloat p.x, fromFloat p.y ] |> String.concat
     lineToCentre = "L " ++ fromFloat cx ++ "," ++ fromFloat cy
+
+    fromExtended sector d =
+      polarToCartesian (r + d, sector.beginAngle)
+      |> toChartCoordinates origin
+    toExtended sector d = 
+      polarToCartesian (r + d, sector.endAngle)
+      |> toChartCoordinates origin
 
     drawSector : Sector -> Svg.Svg msg
     drawSector sector =
-      Svg.path
-        [ [moveToCentre, lineToPoint sector.from, arc sector.to (360 * sector.datum.value / total), lineToCentre] |> intersperse " " >> String.concat >> SA.d
-        , SA.stroke "white"
-        , SA.strokeWidth "2"
-        , SA.shapeRendering "geometricPrecision"
-        , toRGBAString >> SA.fill <|
+      let
+        angle = 360 * sector.datum.value / total
+        color = toRGBAString <|
           case model.hovered of
             Nothing -> sector.datum.color
             Just s -> if s == sector then addLightness -10 sector.datum.color else sector.datum.color
-        , onMouseOver
-            <| toMsg
-            <| Focus sector
-        , onMouseOut <| toMsg Blur
-        ]
-        []
+      in
+        Svg.path
+          [ [ moveToCentre
+            , lineTo <| fromExtended sector 0
+            , arc (toExtended sector 0) angle 1
+            , lineToCentre
+            ]
+            |> intersperse " " >> String.concat >> SA.d
+          , SA.stroke color
+          , SA.strokeWidth "0"
+          , SA.shapeRendering "geometricPrecision"
+          , SA.fill color
+          , onMouseOver
+              <| toMsg
+              <| Focus sector
+          , onMouseOut <| toMsg Blur
+          ]
+          []
 
-    hoveredSector sector =
+    drawBoundary : Sector -> Svg.Svg msg
+    drawBoundary sector =
+      let
+        (Chart {x, y}) = fromExtended sector 2
+      in
+      line
+        { x1 = cx
+        , y1 = cy
+        , x2 = x
+        , y2 = y
+        , stroke = fromColor opaque white
+        , strokeWidth = 2
+        , shapeRendering = GeometricPrecision
+        }
+
+    tooltipPoint sector =
       let
         (Cartesian p1) =
-          sector.from
+          fromExtended sector 0
           |> toCartesianCoordinate origin
         (Cartesian p2) =
-          sector.to
+          toExtended sector 0
           |> toCartesianCoordinate origin
         midPoint = { x = (p1.x + p2.x) / 2, y = (p1.y + p2.y) / 2}
         theta = getAngle (Cartesian midPoint)
-        r2 = r + 5
-        eqAngle a1 a2 = abs (a1 - a2) <= 0.0175
-        p =
-          if eqAngle theta 0
-            then toCartesian (r2, 0)
-                 |> translate (tw/2, 0)
-          else if theta < pi/2
-            then polarToCartesian (r2, theta)
-                 |> translate (tw/2, th/2)
-          else if eqAngle theta (pi/2)
-            then toCartesian (0, r2)
-                 |> translate (0, th/2)
-          else if theta < pi
-            then polarToCartesian (r2, theta)
-                 |> translate (-tw/2, th/2)
-          else if eqAngle theta pi
-            then toCartesian (-r2, 0)
-                 |> translate (-tw/2, 0)
-          else if theta < 3/2*pi
-            then polarToCartesian (r2, theta)
-                 |> translate (-tw/2, -th/2)
-          else if eqAngle theta (3*pi/2)
-            then toCartesian (0, -r2)
-                 |> translate (0, -th/2)
-          else polarToCartesian (r2, theta)
-               |> translate (tw/2, -th/2)
+        r2 = r + 8
+        eqAngle a1 a2 = abs (a1 - a2) <= 2*0.0175
+        p = polarToCartesian (r2, theta) |>
+          if eqAngle theta 0 || eqAngle theta (pi/2) || eqAngle theta pi || eqAngle theta (3*pi/2)
+            then
+              translate (tw/2 * cos theta, th/2 * sin theta)
+            else
+              translate (tw/2 * toFloat (signum midPoint.x), th/2 * toFloat (signum midPoint.y))
       in
         toChartCoordinates origin p
 
@@ -217,20 +230,48 @@ pieChart (PieChartOptionsC options) (PieChartDataC data) toMsg (PieModelC model)
       { width = tw
       , height = th
       , label = sector.datum.label
-      , point = hoveredSector sector
+      , point = tooltipPoint sector
       , value = sector.datum.value
       , percentage = sector.datum.value * 100 / total
       }
+  
+    hoveredSector =
+      case model.hovered of
+        Nothing -> []
+        Just sector ->
+          let
+            angle = 360 * sector.datum.value / total
+            outerPath =
+              let
+                color = addLightness -10 sector.datum.color |> toRGBAString
+              in
+              Svg.path
+              [ [ moveTo <| fromExtended sector 2
+                , lineTo <| fromExtended sector 7
+                , arc (toExtended sector 7) angle 1
+                , lineTo <| toExtended sector 2
+                , arc (fromExtended sector 2) angle 0
+                ]
+                |> intersperse " " >> String.concat >> SA.d
+              , SA.strokeWidth "2"
+              , SA.shapeRendering "geometricPrecision"
+              , SA.stroke "white"
+              , SA.fill color
+              ]
+              []
+          in
+          [ outerPath
+          , toTooltipOptions sector |> tooltip
+          ]
   in
-  Html.div
-  []
-  [ Svg.svg
+  Svg.svg
     [ options.width |> fromInt >> SA.width
     , options.height |> fromInt >> SA.height
     , HA.style "font-family" "sans-serif"
     ]
-    <| map drawSector sectors ++ filterMap (Maybe.map (toTooltipOptions >> tooltip)) [ model.hovered ]
-  ]
+    <| map drawSector sectors
+        ++ map drawBoundary sectors
+        ++ hoveredSector
 
 type alias Point = { x : Float, y : Float }
 
@@ -265,10 +306,13 @@ toCartesianCoordinate (Chart origin) (Chart point) =
   Cartesian { x = x, y = y }
 
 polarToCartesian : (Float, Float) -> CartesianCoordinate
-polarToCartesian (r, theta) = Cartesian
-  { x = r * cos theta
-  , y = r * sin theta
-  }
+polarToCartesian = toCartesian << fromPolar
+
+signum : Float -> Int
+signum x =
+  if x < 0
+    then -1
+    else if x > 0 then 1 else 0
 
 translate : (Float, Float) -> CartesianCoordinate -> CartesianCoordinate
 translate (dx, dy) (Cartesian {x, y}) = Cartesian { x = x + dx, y = y + dy }

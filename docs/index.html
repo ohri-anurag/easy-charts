@@ -6018,33 +6018,56 @@ var $author$project$LineChart$Labels$createLabel = function (options) {
 				$elm$svg$Svg$text(options.label)
 			]));
 };
+var $author$project$LineChart$Lines$CrispEdges = {$: 'CrispEdges'};
 var $elm$svg$Svg$line = $elm$svg$Svg$trustedNode('line');
 var $elm$svg$Svg$Attributes$shapeRendering = _VirtualDom_attribute('shape-rendering');
+var $author$project$LineChart$Lines$show = function (s) {
+	if (s.$ === 'CrispEdges') {
+		return 'crispEdges';
+	} else {
+		return 'geometricPrecision';
+	}
+};
 var $elm$svg$Svg$Attributes$stroke = _VirtualDom_attribute('stroke');
 var $elm$svg$Svg$Attributes$strokeWidth = _VirtualDom_attribute('stroke-width');
 var $elm$svg$Svg$Attributes$x1 = _VirtualDom_attribute('x1');
 var $elm$svg$Svg$Attributes$x2 = _VirtualDom_attribute('x2');
 var $elm$svg$Svg$Attributes$y1 = _VirtualDom_attribute('y1');
 var $elm$svg$Svg$Attributes$y2 = _VirtualDom_attribute('y2');
-var $author$project$LineChart$Lines$line = function (options) {
+var $author$project$LineChart$Lines$line = function (_v0) {
+	var x1 = _v0.x1;
+	var y1 = _v0.y1;
+	var x2 = _v0.x2;
+	var y2 = _v0.y2;
+	var stroke = _v0.stroke;
+	var strokeWidth = _v0.strokeWidth;
+	var shapeRendering = _v0.shapeRendering;
 	return A2(
 		$elm$svg$Svg$line,
 		_List_fromArray(
 			[
 				$elm$svg$Svg$Attributes$x1(
-				$elm$core$String$fromFloat(options.x1)),
+				$elm$core$String$fromFloat(x1)),
 				$elm$svg$Svg$Attributes$y1(
-				$elm$core$String$fromFloat(options.y1)),
+				$elm$core$String$fromFloat(y1)),
 				$elm$svg$Svg$Attributes$x2(
-				$elm$core$String$fromFloat(options.x2)),
+				$elm$core$String$fromFloat(x2)),
 				$elm$svg$Svg$Attributes$y2(
-				$elm$core$String$fromFloat(options.y2)),
-				$elm$svg$Svg$Attributes$strokeWidth('1'),
-				$elm$svg$Svg$Attributes$shapeRendering('crispEdges'),
+				$elm$core$String$fromFloat(y2)),
+				A3($elm$core$Basics$composeR, $elm$core$String$fromInt, $elm$svg$Svg$Attributes$strokeWidth, strokeWidth),
+				A3($elm$core$Basics$composeR, $author$project$LineChart$Lines$show, $elm$svg$Svg$Attributes$shapeRendering, shapeRendering),
 				$elm$svg$Svg$Attributes$stroke(
-				$tesk9$palette$TransparentColor$toRGBAString(options.stroke))
+				$tesk9$palette$TransparentColor$toRGBAString(stroke))
 			]),
 		_List_Nil);
+};
+var $author$project$LineChart$Lines$hline = function (_v0) {
+	var y = _v0.y;
+	var x1 = _v0.x1;
+	var x2 = _v0.x2;
+	var stroke = _v0.stroke;
+	return $author$project$LineChart$Lines$line(
+		{shapeRendering: $author$project$LineChart$Lines$CrispEdges, stroke: stroke, strokeWidth: 1, x1: x1, x2: x2, y1: y, y2: y});
 };
 var $author$project$LineChart$Horizontals$grid = function (options) {
 	var yth = function (i) {
@@ -6062,21 +6085,19 @@ var $author$project$LineChart$Horizontals$grid = function (options) {
 				function (i, label) {
 					return _List_fromArray(
 						[
-							$author$project$LineChart$Lines$line(
+							$author$project$LineChart$Lines$hline(
 							{
 								stroke: options.color,
 								x1: x1,
 								x2: x2,
-								y1: yth(i),
-								y2: yth(i)
+								y: yth(i)
 							}),
-							$author$project$LineChart$Lines$line(
+							$author$project$LineChart$Lines$hline(
 							{
 								stroke: options.color,
 								x1: x3,
 								x2: x1,
-								y1: yth(i),
-								y2: yth(i)
+								y: yth(i)
 							}),
 							$author$project$LineChart$Labels$createLabel(
 							{
@@ -6094,6 +6115,14 @@ var $elm$core$Basics$always = F2(
 	function (a, _v0) {
 		return a;
 	});
+var $author$project$LineChart$Lines$vline = function (_v0) {
+	var x = _v0.x;
+	var y1 = _v0.y1;
+	var y2 = _v0.y2;
+	var stroke = _v0.stroke;
+	return $author$project$LineChart$Lines$line(
+		{shapeRendering: $author$project$LineChart$Lines$CrispEdges, stroke: stroke, strokeWidth: 1, x1: x, x2: x, y1: y1, y2: y2});
+};
 var $author$project$LineChart$Verticals$grid = function (options) {
 	var xth = function (i) {
 		return options.begin + (i * options.step);
@@ -6110,19 +6139,17 @@ var $author$project$LineChart$Verticals$grid = function (options) {
 				function (i, label) {
 					return _List_fromArray(
 						[
-							$author$project$LineChart$Lines$line(
+							$author$project$LineChart$Lines$vline(
 							{
 								stroke: options.color,
-								x1: xth(i),
-								x2: xth(i),
+								x: xth(i),
 								y1: y1,
 								y2: y2
 							}),
-							$author$project$LineChart$Lines$line(
+							$author$project$LineChart$Lines$vline(
 							{
 								stroke: options.color,
-								x1: xth(i),
-								x2: xth(i),
+								x: xth(i),
 								y1: y2,
 								y2: y3
 							}),
@@ -6915,6 +6942,7 @@ var $author$project$PieChart$Chart = function (a) {
 var $author$project$PieChart$Focus = function (a) {
 	return {$: 'Focus', a: a};
 };
+var $author$project$LineChart$Lines$GeometricPrecision = {$: 'GeometricPrecision'};
 var $tesk9$palette$Internal$Color$HSLA = function (a) {
 	return {$: 'HSLA', a: a};
 };
@@ -7010,24 +7038,26 @@ var $author$project$PieChart$getAngle = function (_v0) {
 	return (x >= 0) ? ((y >= 0) ? angle : ((2 * $elm$core$Basics$pi) + angle)) : ($elm$core$Basics$pi + angle);
 };
 var $elm$svg$Svg$path = $elm$svg$Svg$trustedNode('path');
-var $author$project$PieChart$polarToCartesian = function (_v0) {
-	var r = _v0.a;
+var $elm$core$Basics$fromPolar = function (_v0) {
+	var radius = _v0.a;
 	var theta = _v0.b;
-	return $author$project$PieChart$Cartesian(
-		{
-			x: r * $elm$core$Basics$cos(theta),
-			y: r * $elm$core$Basics$sin(theta)
-		});
-};
-var $elm$core$List$sortBy = _List_sortBy;
-var $elm$core$List$sum = function (numbers) {
-	return A3($elm$core$List$foldl, $elm$core$Basics$add, 0, numbers);
+	return _Utils_Tuple2(
+		radius * $elm$core$Basics$cos(theta),
+		radius * $elm$core$Basics$sin(theta));
 };
 var $author$project$PieChart$toCartesian = function (_v0) {
 	var x = _v0.a;
 	var y = _v0.b;
 	return $author$project$PieChart$Cartesian(
 		{x: x, y: y});
+};
+var $author$project$PieChart$polarToCartesian = A2($elm$core$Basics$composeL, $author$project$PieChart$toCartesian, $elm$core$Basics$fromPolar);
+var $author$project$PieChart$signum = function (x) {
+	return (x < 0) ? (-1) : ((x > 0) ? 1 : 0);
+};
+var $elm$core$List$sortBy = _List_sortBy;
+var $elm$core$List$sum = function (numbers) {
+	return A3($elm$core$List$foldl, $elm$core$Basics$add, 0, numbers);
 };
 var $author$project$PieChart$toCartesianCoordinate = F2(
 	function (_v0, _v1) {
@@ -7048,10 +7078,11 @@ var $author$project$PieChart$toChartCoordinates = F2(
 			{x: x, y: y});
 	});
 var $author$project$PieChart$tooltip = function (options) {
-	var y = options.point.y;
-	var x = options.point.x;
 	var tw = options.width;
 	var th = options.height;
+	var _v0 = options.point;
+	var x = _v0.a.x;
+	var y = _v0.a.y;
 	return A2(
 		$elm$svg$Svg$g,
 		_List_fromArray(
@@ -7111,6 +7142,8 @@ var $author$project$PieChart$translate = F2(
 		return $author$project$PieChart$Cartesian(
 			{x: x + dx, y: y + dy});
 	});
+var $tesk9$palette$Palette$X11$white = $tesk9$palette$SolidColor$fromRGB(
+	_Utils_Tuple3(255, 255, 255));
 var $author$project$PieChart$pieChart = F4(
 	function (_v0, _v1, toMsg, _v2) {
 		var options = _v0.a;
@@ -7132,7 +7165,27 @@ var $author$project$PieChart$pieChart = F4(
 				return $.value;
 			},
 			data);
-		var lineToPoint = function (_v9) {
+		var sectors = $elm$core$List$reverse(
+			A3(
+				$elm$core$List$foldl,
+				F2(
+					function (datum, _v11) {
+						var accumAngle = _v11.accumAngle;
+						var sectorList = _v11.sectorList;
+						var newAccumAngle = accumAngle - (((datum.value * 2) * $elm$core$Basics$pi) / total);
+						var newSector = {beginAngle: accumAngle, datum: datum, endAngle: newAccumAngle};
+						return {
+							accumAngle: newAccumAngle,
+							sectorList: A2($elm$core$List$cons, newSector, sectorList)
+						};
+					}),
+				{accumAngle: $elm$core$Basics$pi / 2, sectorList: _List_Nil},
+				sortedData).sectorList);
+		var moveTo = function (_v10) {
+			var p = _v10.a;
+			return 'M ' + ($elm$core$String$fromFloat(p.x) + (',' + $elm$core$String$fromFloat(p.y)));
+		};
+		var lineTo = function (_v9) {
 			var p = _v9.a;
 			return 'L ' + ($elm$core$String$fromFloat(p.x) + (',' + $elm$core$String$fromFloat(p.y)));
 		};
@@ -7143,113 +7196,114 @@ var $author$project$PieChart$pieChart = F4(
 		var dx = (tw + 10) + ((w - (2 * r)) / 2);
 		var origin = $author$project$PieChart$Chart(
 			{x: dx + r, y: dy + r});
-		var hoveredSector = function (sector) {
-			var r2 = r + 5;
+		var fromExtended = F2(
+			function (sector, d) {
+				return A2(
+					$author$project$PieChart$toChartCoordinates,
+					origin,
+					$author$project$PieChart$polarToCartesian(
+						_Utils_Tuple2(r + d, sector.beginAngle)));
+			});
+		var moveToCentre = moveTo(origin);
+		var toExtended = F2(
+			function (sector, d) {
+				return A2(
+					$author$project$PieChart$toChartCoordinates,
+					origin,
+					$author$project$PieChart$polarToCartesian(
+						_Utils_Tuple2(r + d, sector.endAngle)));
+			});
+		var tooltipPoint = function (sector) {
+			var r2 = r + 8;
 			var eqAngle = F2(
 				function (a1, a2) {
-					return $elm$core$Basics$abs(a1 - a2) <= 0.0175;
+					return _Utils_cmp(
+						$elm$core$Basics$abs(a1 - a2),
+						2 * 0.0175) < 1;
 				});
-			var _v6 = A2($author$project$PieChart$toCartesianCoordinate, origin, sector.to);
-			var p2 = _v6.a;
-			var _v7 = A2($author$project$PieChart$toCartesianCoordinate, origin, sector.from);
-			var p1 = _v7.a;
+			var _v7 = A2(
+				$author$project$PieChart$toCartesianCoordinate,
+				origin,
+				A2(toExtended, sector, 0));
+			var p2 = _v7.a;
+			var _v8 = A2(
+				$author$project$PieChart$toCartesianCoordinate,
+				origin,
+				A2(fromExtended, sector, 0));
+			var p1 = _v8.a;
 			var midPoint = {x: (p1.x + p2.x) / 2, y: (p1.y + p2.y) / 2};
 			var theta = $author$project$PieChart$getAngle(
 				$author$project$PieChart$Cartesian(midPoint));
-			var p = A2(eqAngle, theta, 0) ? A2(
-				$author$project$PieChart$translate,
-				_Utils_Tuple2(tw / 2, 0),
-				$author$project$PieChart$toCartesian(
-					_Utils_Tuple2(r2, 0))) : ((_Utils_cmp(theta, $elm$core$Basics$pi / 2) < 0) ? A2(
-				$author$project$PieChart$translate,
-				_Utils_Tuple2(tw / 2, th / 2),
+			var p = ((A2(eqAngle, theta, 0) || (A2(eqAngle, theta, $elm$core$Basics$pi / 2) || (A2(eqAngle, theta, $elm$core$Basics$pi) || A2(eqAngle, theta, (3 * $elm$core$Basics$pi) / 2)))) ? $author$project$PieChart$translate(
+				_Utils_Tuple2(
+					(tw / 2) * $elm$core$Basics$cos(theta),
+					(th / 2) * $elm$core$Basics$sin(theta))) : $author$project$PieChart$translate(
+				_Utils_Tuple2(
+					(tw / 2) * $author$project$PieChart$signum(midPoint.x),
+					(th / 2) * $author$project$PieChart$signum(midPoint.y))))(
 				$author$project$PieChart$polarToCartesian(
-					_Utils_Tuple2(r2, theta))) : (A2(eqAngle, theta, $elm$core$Basics$pi / 2) ? A2(
-				$author$project$PieChart$translate,
-				_Utils_Tuple2(0, th / 2),
-				$author$project$PieChart$toCartesian(
-					_Utils_Tuple2(0, r2))) : ((_Utils_cmp(theta, $elm$core$Basics$pi) < 0) ? A2(
-				$author$project$PieChart$translate,
-				_Utils_Tuple2((-tw) / 2, th / 2),
-				$author$project$PieChart$polarToCartesian(
-					_Utils_Tuple2(r2, theta))) : (A2(eqAngle, theta, $elm$core$Basics$pi) ? A2(
-				$author$project$PieChart$translate,
-				_Utils_Tuple2((-tw) / 2, 0),
-				$author$project$PieChart$toCartesian(
-					_Utils_Tuple2(-r2, 0))) : ((_Utils_cmp(theta, (3 / 2) * $elm$core$Basics$pi) < 0) ? A2(
-				$author$project$PieChart$translate,
-				_Utils_Tuple2((-tw) / 2, (-th) / 2),
-				$author$project$PieChart$polarToCartesian(
-					_Utils_Tuple2(r2, theta))) : (A2(eqAngle, theta, (3 * $elm$core$Basics$pi) / 2) ? A2(
-				$author$project$PieChart$translate,
-				_Utils_Tuple2(0, (-th) / 2),
-				$author$project$PieChart$toCartesian(
-					_Utils_Tuple2(0, -r2))) : A2(
-				$author$project$PieChart$translate,
-				_Utils_Tuple2(tw / 2, (-th) / 2),
-				$author$project$PieChart$polarToCartesian(
-					_Utils_Tuple2(r2, theta)))))))));
-			var _v8 = A2($author$project$PieChart$toChartCoordinates, origin, p);
-			var point = _v8.a;
-			return point;
+					_Utils_Tuple2(r2, theta)));
+			return A2($author$project$PieChart$toChartCoordinates, origin, p);
 		};
 		var toTooltipOptions = function (sector) {
 			return {
 				height: th,
 				label: sector.datum.label,
 				percentage: (sector.datum.value * 100) / total,
-				point: hoveredSector(sector),
+				point: tooltipPoint(sector),
 				value: sector.datum.value,
 				width: tw
 			};
 		};
-		var sectors = A3(
-			$elm$core$List$foldl,
-			F2(
-				function (datum, _v5) {
-					var accumAngle = _v5.accumAngle;
-					var sectorList = _v5.sectorList;
-					var start = $author$project$PieChart$polarToCartesian(
-						_Utils_Tuple2(r, accumAngle));
-					var newAccumAngle = accumAngle - (((datum.value * 2) * $elm$core$Basics$pi) / total);
-					var to = $author$project$PieChart$polarToCartesian(
-						_Utils_Tuple2(r, newAccumAngle));
-					var newSector = {
-						datum: datum,
-						from: A2($author$project$PieChart$toChartCoordinates, origin, start),
-						to: A2($author$project$PieChart$toChartCoordinates, origin, to)
-					};
-					return {
-						accumAngle: newAccumAngle,
-						sectorList: A2($elm$core$List$cons, newSector, sectorList)
-					};
-				}),
-			{accumAngle: $elm$core$Basics$pi / 2, sectorList: _List_Nil},
-			sortedData).sectorList;
 		var cy = dy + r;
 		var cx = dx + r;
+		var drawBoundary = function (sector) {
+			var _v6 = A2(fromExtended, sector, 2);
+			var x = _v6.a.x;
+			var y = _v6.a.y;
+			return $author$project$LineChart$Lines$line(
+				{
+					shapeRendering: $author$project$LineChart$Lines$GeometricPrecision,
+					stroke: A2($tesk9$palette$TransparentColor$fromColor, $tesk9$palette$TransparentColor$opaque, $tesk9$palette$Palette$X11$white),
+					strokeWidth: 2,
+					x1: cx,
+					x2: x,
+					y1: cy,
+					y2: y
+				});
+		};
 		var lineToCentre = 'L ' + ($elm$core$String$fromFloat(cx) + (',' + $elm$core$String$fromFloat(cy)));
-		var moveToCentre = 'M ' + ($elm$core$String$fromFloat(cx) + (',' + $elm$core$String$fromFloat(cy)));
-		var arc = F2(
-			function (_v4, angle) {
-				var p = _v4.a;
+		var arc = F3(
+			function (_v5, angle, direction) {
+				var p = _v5.a;
 				return $elm$core$String$concat(
 					A2(
 						$elm$core$List$intersperse,
 						' ',
 						_List_fromArray(
 							[
-								'A ',
+								'A',
 								$elm$core$String$fromFloat(r),
 								$elm$core$String$fromFloat(r),
 								$elm$core$String$fromFloat(angle),
 								'0',
-								'1',
+								$elm$core$String$fromInt(direction),
 								$elm$core$String$fromFloat(p.x),
 								$elm$core$String$fromFloat(p.y)
 							])));
 			});
 		var drawSector = function (sector) {
+			var color = $tesk9$palette$TransparentColor$toRGBAString(
+				function () {
+					var _v4 = model.hovered;
+					if (_v4.$ === 'Nothing') {
+						return sector.datum.color;
+					} else {
+						var s = _v4.a;
+						return _Utils_eq(s, sector) ? A2($tesk9$palette$TransparentColor$addLightness, -10, sector.datum.color) : sector.datum.color;
+					}
+				}());
+			var angle = (360 * sector.datum.value) / total;
 			return A2(
 				$elm$svg$Svg$path,
 				_List_fromArray(
@@ -7261,26 +7315,19 @@ var $author$project$PieChart$pieChart = F4(
 						_List_fromArray(
 							[
 								moveToCentre,
-								lineToPoint(sector.from),
-								A2(arc, sector.to, (360 * sector.datum.value) / total),
+								lineTo(
+								A2(fromExtended, sector, 0)),
+								A3(
+								arc,
+								A2(toExtended, sector, 0),
+								angle,
+								1),
 								lineToCentre
 							])),
-						$elm$svg$Svg$Attributes$stroke('white'),
-						$elm$svg$Svg$Attributes$strokeWidth('2'),
+						$elm$svg$Svg$Attributes$stroke(color),
+						$elm$svg$Svg$Attributes$strokeWidth('0'),
 						$elm$svg$Svg$Attributes$shapeRendering('geometricPrecision'),
-						A3(
-						$elm$core$Basics$composeR,
-						$tesk9$palette$TransparentColor$toRGBAString,
-						$elm$svg$Svg$Attributes$fill,
-						function () {
-							var _v3 = model.hovered;
-							if (_v3.$ === 'Nothing') {
-								return sector.datum.color;
-							} else {
-								var s = _v3.a;
-								return _Utils_eq(s, sector) ? A2($tesk9$palette$TransparentColor$addLightness, -10, sector.datum.color) : sector.datum.color;
-							}
-						}()),
+						$elm$svg$Svg$Attributes$fill(color),
 						$elm$html$Html$Events$onMouseOver(
 						toMsg(
 							$author$project$PieChart$Focus(sector))),
@@ -7289,28 +7336,71 @@ var $author$project$PieChart$pieChart = F4(
 					]),
 				_List_Nil);
 		};
+		var hoveredSector = function () {
+			var _v3 = model.hovered;
+			if (_v3.$ === 'Nothing') {
+				return _List_Nil;
+			} else {
+				var sector = _v3.a;
+				var angle = (360 * sector.datum.value) / total;
+				var outerPath = function () {
+					var color = $tesk9$palette$TransparentColor$toRGBAString(
+						A2($tesk9$palette$TransparentColor$addLightness, -10, sector.datum.color));
+					return A2(
+						$elm$svg$Svg$path,
+						_List_fromArray(
+							[
+								A3(
+								$elm$core$Basics$composeR,
+								$elm$core$List$intersperse(' '),
+								A2($elm$core$Basics$composeR, $elm$core$String$concat, $elm$svg$Svg$Attributes$d),
+								_List_fromArray(
+									[
+										moveTo(
+										A2(fromExtended, sector, 2)),
+										lineTo(
+										A2(fromExtended, sector, 7)),
+										A3(
+										arc,
+										A2(toExtended, sector, 7),
+										angle,
+										1),
+										lineTo(
+										A2(toExtended, sector, 2)),
+										A3(
+										arc,
+										A2(fromExtended, sector, 2),
+										angle,
+										0)
+									])),
+								$elm$svg$Svg$Attributes$strokeWidth('2'),
+								$elm$svg$Svg$Attributes$shapeRendering('geometricPrecision'),
+								$elm$svg$Svg$Attributes$stroke('white'),
+								$elm$svg$Svg$Attributes$fill(color)
+							]),
+						_List_Nil);
+				}();
+				return _List_fromArray(
+					[
+						outerPath,
+						$author$project$PieChart$tooltip(
+						toTooltipOptions(sector))
+					]);
+			}
+		}();
 		return A2(
-			$elm$html$Html$div,
-			_List_Nil,
+			$elm$svg$Svg$svg,
 			_List_fromArray(
 				[
-					A2(
-					$elm$svg$Svg$svg,
-					_List_fromArray(
-						[
-							A3($elm$core$Basics$composeR, $elm$core$String$fromInt, $elm$svg$Svg$Attributes$width, options.width),
-							A3($elm$core$Basics$composeR, $elm$core$String$fromInt, $elm$svg$Svg$Attributes$height, options.height),
-							A2($elm$html$Html$Attributes$style, 'font-family', 'sans-serif')
-						]),
-					_Utils_ap(
-						A2($elm$core$List$map, drawSector, sectors),
-						A2(
-							$elm$core$List$filterMap,
-							$elm$core$Maybe$map(
-								A2($elm$core$Basics$composeR, toTooltipOptions, $author$project$PieChart$tooltip)),
-							_List_fromArray(
-								[model.hovered]))))
-				]));
+					A3($elm$core$Basics$composeR, $elm$core$String$fromInt, $elm$svg$Svg$Attributes$width, options.width),
+					A3($elm$core$Basics$composeR, $elm$core$String$fromInt, $elm$svg$Svg$Attributes$height, options.height),
+					A2($elm$html$Html$Attributes$style, 'font-family', 'sans-serif')
+				]),
+			_Utils_ap(
+				A2($elm$core$List$map, drawSector, sectors),
+				_Utils_ap(
+					A2($elm$core$List$map, drawBoundary, sectors),
+					hoveredSector)));
 	});
 var $author$project$Main$view = function (model) {
 	return A2(

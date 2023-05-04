@@ -1,7 +1,7 @@
 module LineChart.Horizontals exposing (..)
 
 import LineChart.Labels exposing (createLabel)
-import LineChart.Lines exposing (line)
+import LineChart.Lines exposing (hline)
 import List exposing (..)
 import Svg exposing (Svg)
 import TransparentColor exposing (TransparentColor)
@@ -16,13 +16,6 @@ type alias HorizontalGridOptions =
   , textOptions : TextOptions
   }
 
-type alias HLineOptions =
-  { y : Float
-  , x1 : Float
-  , x2 : Float
-  , stroke : TransparentColor
-  }
-
 grid : HorizontalGridOptions -> List (Svg msg)
 grid options =
   let
@@ -32,18 +25,16 @@ grid options =
     x4 = x1 - 15
   in
   indexedMap (\i label ->
-    [ line
+    [ hline
       { x1 = x1
-      , y1 = yth i
       , x2 = x2
-      , y2 = yth i
+      , y = yth i
       , stroke = options.color
       }
-    , line
+    , hline
       { x1 = x3
-      , y1 = yth i
       , x2 = x1
-      , y2 = yth i
+      , y = yth i
       , stroke = options.color
       }
     , createLabel

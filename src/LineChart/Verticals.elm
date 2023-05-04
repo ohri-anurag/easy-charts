@@ -1,7 +1,7 @@
 module LineChart.Verticals exposing (..)
 
 import LineChart.Labels exposing (createLabel)
-import LineChart.Lines exposing (line)
+import LineChart.Lines exposing (vline)
 import LineChart.Types exposing (TextOptions)
 import List exposing (..)
 import Svg exposing (Svg)
@@ -16,13 +16,6 @@ type alias VerticalGridOptions =
   , textOptions : TextOptions
   }
 
-type alias VLineOptions =
-  { x : Float
-  , y1 : Float
-  , y2 : Float
-  , stroke : TransparentColor
-  }
-
 grid : VerticalGridOptions -> List (Svg msg)
 grid options =
   let
@@ -32,17 +25,15 @@ grid options =
     y4 = y2 + 20
   in
   indexedMap (\i label ->
-    [ line
-      { x1 = xth i
+    [ vline
+      { x = xth i
       , y1 = y1
-      , x2 = xth i
       , y2 = y2
       , stroke = options.color
       }
-    , line
-      { x1 = xth i
+    , vline
+      { x = xth i
       , y1 = y2
-      , x2 = xth i
       , y2 = y3
       , stroke = options.color
       }
