@@ -5,6 +5,7 @@ import Html exposing (Html, div)
 import List exposing (..)
 import Palette.X11 exposing (..)
 import String exposing (fromFloat, fromInt)
+import SolidColor exposing (fromRGB)
 import TransparentColor exposing (fromColor, opaque)
 
 import LineChart as L
@@ -19,6 +20,7 @@ type alias Model =
   , chartModel4 : L.ChartModel
   , chartModel5 : L.ChartModel
   , pieModel1 : P.PieModel
+  , pieModel2 : P.PieModel
   }
 
 type Msg
@@ -29,6 +31,7 @@ type Msg
   | ChartMessage4 L.ChartMsg
   | ChartMessage5 L.ChartMsg
   | PieMessage1 P.PieMsg
+  | PieMessage2 P.PieMsg
 
 init : Model
 init =
@@ -38,6 +41,7 @@ init =
   , chartModel4 = L.initChartModel
   , chartModel5 = L.initChartModel
   , pieModel1 = P.initPieModel
+  , pieModel2 = P.initPieModel
   }
 
 view : Model -> Html Msg
@@ -48,7 +52,8 @@ view model = div
   , L.lineChart options3 data3 ChartMessage3 model.chartModel3
   , L.lineChart options4 data4 ChartMessage4 model.chartModel4
   , L.lineChart options5 data5 ChartMessage5 model.chartModel5
-  , P.pieChart pieOptions pieData PieMessage1 model.pieModel1
+  , P.pieChart commonPieOptions pieData1 PieMessage1 model.pieModel1
+  , P.pieChart pieOptions2 pieData2 PieMessage2 model.pieModel2
   ]
 
 update : Msg -> Model -> Model
@@ -59,7 +64,8 @@ update msg model =
     ChartMessage3 chartMsg -> { model | chartModel3 = L.updateChartModel chartMsg model.chartModel3 }
     ChartMessage4 chartMsg -> { model | chartModel4 = L.updateChartModel chartMsg model.chartModel4 }
     ChartMessage5 chartMsg -> { model | chartModel5 = L.updateChartModel chartMsg model.chartModel5 }
-    PieMessage1 pieMsg -> { model | pieModel1 = P.updatePieModel pieMsg model.pieModel1 }
+    PieMessage1 pieMsg1 -> { model | pieModel1 = P.updatePieModel pieMsg1 model.pieModel1 }
+    PieMessage2 pieMsg2 -> { model | pieModel2 = P.updatePieModel pieMsg2 model.pieModel2 }
     NoOp -> model
 
 commonOptions : L.LineChartOptions
@@ -132,8 +138,12 @@ options5 = commonOptions
   |> L.setPointRadius 2
   |> L.setTooltipWidth 210
 
-pieData : P.PieChartData
-pieData = P.createData
+commonPieOptions : P.PieChartOptions
+commonPieOptions = P.setChartWidth 1200 P.defaultPieChartOptions
+  |> P.setChartHeight 800
+
+pieData1 : P.PieChartData
+pieData1 = P.createData
   [ P.createDataSet "Q1" 25 (fromColor opaque blue)
   , P.createDataSet "Q2" 25 (fromColor opaque red)
   , P.createDataSet "Q3" 25 (fromColor opaque green)
@@ -141,9 +151,17 @@ pieData = P.createData
   , P.createDataSet "Q5" 25 (fromColor opaque magenta)
   ]
 
-pieOptions : P.PieChartOptions
-pieOptions = P.setChartWidth 1200 P.defaultPieChartOptions
-  |> P.setChartHeight 800
+pieData2 : P.PieChartData
+pieData2 = P.createData
+  [ P.createDataSet "Sleep" 8 (fromColor opaque <| fromRGB (142, 236, 245) )
+  , P.createDataSet "Gym" 1 (fromColor opaque <| fromRGB (147, 129, 255))
+  , P.createDataSet "Work" 8 (fromColor opaque <| fromRGB (255, 104, 107))
+  , P.createDataSet "Wifey" 5 (fromColor opaque <| fromRGB (255, 112, 166))
+  , P.createDataSet "Hobbies" 2 (fromColor opaque <| fromRGB (123, 241, 168))
+  ]
+
+pieOptions2 : P.PieChartOptions
+pieOptions2 = P.setTooltipWidth 200 commonPieOptions
 
 main = sandbox {view = view, update = update, init = init}
 

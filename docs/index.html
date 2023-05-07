@@ -4398,7 +4398,7 @@ var $author$project$PieChart$PieModelC = function (a) {
 };
 var $author$project$PieChart$initPieModel = $author$project$PieChart$PieModelC(
 	{hovered: $elm$core$Maybe$Nothing});
-var $author$project$Main$init = {chartModel1: $author$project$LineChart$initChartModel, chartModel2: $author$project$LineChart$initChartModel, chartModel3: $author$project$LineChart$initChartModel, chartModel4: $author$project$LineChart$initChartModel, chartModel5: $author$project$LineChart$initChartModel, pieModel1: $author$project$PieChart$initPieModel};
+var $author$project$Main$init = {chartModel1: $author$project$LineChart$initChartModel, chartModel2: $author$project$LineChart$initChartModel, chartModel3: $author$project$LineChart$initChartModel, chartModel4: $author$project$LineChart$initChartModel, chartModel5: $author$project$LineChart$initChartModel, pieModel1: $author$project$PieChart$initPieModel, pieModel2: $author$project$PieChart$initPieModel};
 var $elm$core$Basics$EQ = {$: 'EQ'};
 var $elm$core$Basics$GT = {$: 'GT'};
 var $elm$core$Basics$LT = {$: 'LT'};
@@ -5280,11 +5280,18 @@ var $author$project$Main$update = F2(
 						chartModel5: A2($author$project$LineChart$updateChartModel, chartMsg, model.chartModel5)
 					});
 			case 'PieMessage1':
-				var pieMsg = msg.a;
+				var pieMsg1 = msg.a;
 				return _Utils_update(
 					model,
 					{
-						pieModel1: A2($author$project$PieChart$updatePieModel, pieMsg, model.pieModel1)
+						pieModel1: A2($author$project$PieChart$updatePieModel, pieMsg1, model.pieModel1)
+					});
+			case 'PieMessage2':
+				var pieMsg2 = msg.a;
+				return _Utils_update(
+					model,
+					{
+						pieModel2: A2($author$project$PieChart$updatePieModel, pieMsg2, model.pieModel2)
 					});
 			default:
 				return model;
@@ -5308,6 +5315,55 @@ var $author$project$Main$ChartMessage5 = function (a) {
 var $author$project$Main$PieMessage1 = function (a) {
 	return {$: 'PieMessage1', a: a};
 };
+var $author$project$Main$PieMessage2 = function (a) {
+	return {$: 'PieMessage2', a: a};
+};
+var $author$project$PieChart$PieChartOptionsC = function (a) {
+	return {$: 'PieChartOptionsC', a: a};
+};
+var $author$project$PieChart$defaultPieChartOptions = $author$project$PieChart$PieChartOptionsC(
+	{
+		chartDimensions: {height: 600, width: 600},
+		legendSpacing: 50,
+		legendWidth: 100,
+		tooltipDimensions: {height: 50, width: 120}
+	});
+var $author$project$LineChart$Types$setHeight = F2(
+	function (h, dimensions) {
+		return _Utils_update(
+			dimensions,
+			{height: h});
+	});
+var $author$project$PieChart$setChartHeight = F2(
+	function (ch, _v0) {
+		var options = _v0.a;
+		return $author$project$PieChart$PieChartOptionsC(
+			_Utils_update(
+				options,
+				{
+					chartDimensions: A2($author$project$LineChart$Types$setHeight, ch, options.chartDimensions)
+				}));
+	});
+var $author$project$LineChart$Types$setWidth = F2(
+	function (w, dimensions) {
+		return _Utils_update(
+			dimensions,
+			{width: w});
+	});
+var $author$project$PieChart$setChartWidth = F2(
+	function (cw, _v0) {
+		var options = _v0.a;
+		return $author$project$PieChart$PieChartOptionsC(
+			_Utils_update(
+				options,
+				{
+					chartDimensions: A2($author$project$LineChart$Types$setWidth, cw, options.chartDimensions)
+				}));
+	});
+var $author$project$Main$commonPieOptions = A2(
+	$author$project$PieChart$setChartHeight,
+	800,
+	A2($author$project$PieChart$setChartWidth, 1200, $author$project$PieChart$defaultPieChartOptions));
 var $author$project$LineChart$LineChartDataC = function (a) {
 	return {$: 'LineChartDataC', a: a};
 };
@@ -6830,12 +6886,6 @@ var $author$project$LineChart$defaultLineChartOptions = $author$project$LineChar
 		tooltipDimensions: {height: 50, width: 120},
 		valueWidth: 100
 	});
-var $author$project$LineChart$Types$setHeight = F2(
-	function (h, dimensions) {
-		return _Utils_update(
-			dimensions,
-			{height: h});
-	});
 var $author$project$LineChart$setChartHeight = F2(
 	function (ch, _v0) {
 		var options = _v0.a;
@@ -6845,12 +6895,6 @@ var $author$project$LineChart$setChartHeight = F2(
 				{
 					chartDimensions: A2($author$project$LineChart$Types$setHeight, ch, options.chartDimensions)
 				}));
-	});
-var $author$project$LineChart$Types$setWidth = F2(
-	function (w, dimensions) {
-		return _Utils_update(
-			dimensions,
-			{width: w});
 	});
 var $author$project$LineChart$setChartWidth = F2(
 	function (cw, _v0) {
@@ -7155,28 +7199,28 @@ var $author$project$PieChart$pieChart = F4(
 					return $.value;
 				},
 				unwrappedData));
-		var sortedData = A2(
-			$elm$core$List$sortBy,
-			function ($) {
-				return $.value;
-			},
-			unwrappedData);
-		var sectors = $elm$core$List$reverse(
-			A3(
-				$elm$core$List$foldl,
-				F2(
-					function (datum, _v13) {
-						var accumAngle = _v13.accumAngle;
-						var sectorList = _v13.sectorList;
-						var newAccumAngle = accumAngle - (((datum.value * 2) * $elm$core$Basics$pi) / total);
-						var newSector = {beginAngle: accumAngle, datum: datum, endAngle: newAccumAngle};
-						return {
-							accumAngle: newAccumAngle,
-							sectorList: A2($elm$core$List$cons, newSector, sectorList)
-						};
-					}),
-				{accumAngle: $elm$core$Basics$pi / 2, sectorList: _List_Nil},
-				sortedData).sectorList);
+		var sortedData = $elm$core$List$reverse(
+			A2(
+				$elm$core$List$sortBy,
+				function ($) {
+					return $.value;
+				},
+				unwrappedData));
+		var sectors = A3(
+			$elm$core$List$foldl,
+			F2(
+				function (datum, _v13) {
+					var accumAngle = _v13.accumAngle;
+					var sectorList = _v13.sectorList;
+					var newAccumAngle = accumAngle - (((datum.value * 2) * $elm$core$Basics$pi) / total);
+					var newSector = {beginAngle: accumAngle, datum: datum, endAngle: newAccumAngle};
+					return {
+						accumAngle: newAccumAngle,
+						sectorList: A2($elm$core$List$cons, newSector, sectorList)
+					};
+				}),
+			{accumAngle: $elm$core$Basics$pi / 2, sectorList: _List_Nil},
+			sortedData).sectorList;
 		var moveTo = function (_v12) {
 			var p = _v12.a;
 			return 'M ' + ($elm$core$String$fromFloat(p.x) + (',' + $elm$core$String$fromFloat(p.y)));
@@ -7195,6 +7239,25 @@ var $author$project$PieChart$pieChart = F4(
 			spacing: 50,
 			width: 50
 		};
+		var arc = F4(
+			function (rd, _v10, angle, direction) {
+				var p = _v10.a;
+				return $elm$core$String$concat(
+					A2(
+						$elm$core$List$intersperse,
+						' ',
+						_List_fromArray(
+							[
+								'A',
+								$elm$core$String$fromFloat(rd),
+								$elm$core$String$fromFloat(rd),
+								$elm$core$String$fromFloat(angle),
+								'0',
+								$elm$core$String$fromInt(direction),
+								$elm$core$String$fromFloat(p.x),
+								$elm$core$String$fromFloat(p.y)
+							])));
+			});
 		var _v3 = $author$project$LineChart$Types$toPair(options.tooltipDimensions);
 		var tw = _v3.a;
 		var th = _v3.b;
@@ -7206,25 +7269,6 @@ var $author$project$PieChart$pieChart = F4(
 		var w = (cw - 20) - (2 * tw);
 		var minDimension = (_Utils_cmp(w, h) < 0) ? w : h;
 		var r = minDimension / 2;
-		var arc = F3(
-			function (_v10, angle, direction) {
-				var p = _v10.a;
-				return $elm$core$String$concat(
-					A2(
-						$elm$core$List$intersperse,
-						' ',
-						_List_fromArray(
-							[
-								'A',
-								$elm$core$String$fromFloat(r),
-								$elm$core$String$fromFloat(r),
-								$elm$core$String$fromFloat(angle),
-								'0',
-								$elm$core$String$fromInt(direction),
-								$elm$core$String$fromFloat(p.x),
-								$elm$core$String$fromFloat(p.y)
-							])));
-			});
 		var dx = (tw + 10) + ((w - (2 * r)) / 2);
 		var cx = dx + r;
 		var dy = (th + 10) + ((h - (2 * r)) / 2);
@@ -7289,8 +7333,9 @@ var $author$project$PieChart$pieChart = F4(
 								moveToCentre,
 								lineTo(
 								A2(fromExtended, sector, 0)),
-								A3(
+								A4(
 								arc,
+								r,
 								A2(toExtended, sector, 0),
 								angle,
 								1),
@@ -7374,15 +7419,17 @@ var $author$project$PieChart$pieChart = F4(
 										A2(fromExtended, sector, 2)),
 										lineTo(
 										A2(fromExtended, sector, 7)),
-										A3(
+										A4(
 										arc,
+										r + 7,
 										A2(toExtended, sector, 7),
 										angle,
 										1),
 										lineTo(
 										A2(toExtended, sector, 2)),
-										A3(
+										A4(
 										arc,
+										r + 2,
 										A2(fromExtended, sector, 2),
 										angle,
 										0)
@@ -7432,7 +7479,7 @@ var $author$project$PieChart$createDataSet = F3(
 	});
 var $tesk9$palette$Palette$X11$magenta = $tesk9$palette$SolidColor$fromRGB(
 	_Utils_Tuple3(255, 0, 255));
-var $author$project$Main$pieData = $author$project$PieChart$createData(
+var $author$project$Main$pieData1 = $author$project$PieChart$createData(
 	_List_fromArray(
 		[
 			A3(
@@ -7461,40 +7508,66 @@ var $author$project$Main$pieData = $author$project$PieChart$createData(
 			25,
 			A2($tesk9$palette$TransparentColor$fromColor, $tesk9$palette$TransparentColor$opaque, $tesk9$palette$Palette$X11$magenta))
 		]));
-var $author$project$PieChart$PieChartOptionsC = function (a) {
-	return {$: 'PieChartOptionsC', a: a};
-};
-var $author$project$PieChart$defaultPieChartOptions = $author$project$PieChart$PieChartOptionsC(
-	{
-		chartDimensions: {height: 600, width: 600},
-		legendSpacing: 50,
-		legendWidth: 100,
-		tooltipDimensions: {height: 50, width: 120}
-	});
-var $author$project$PieChart$setChartHeight = F2(
-	function (ch, _v0) {
+var $author$project$Main$pieData2 = $author$project$PieChart$createData(
+	_List_fromArray(
+		[
+			A3(
+			$author$project$PieChart$createDataSet,
+			'Sleep',
+			8,
+			A2(
+				$tesk9$palette$TransparentColor$fromColor,
+				$tesk9$palette$TransparentColor$opaque,
+				$tesk9$palette$SolidColor$fromRGB(
+					_Utils_Tuple3(142, 236, 245)))),
+			A3(
+			$author$project$PieChart$createDataSet,
+			'Gym',
+			1,
+			A2(
+				$tesk9$palette$TransparentColor$fromColor,
+				$tesk9$palette$TransparentColor$opaque,
+				$tesk9$palette$SolidColor$fromRGB(
+					_Utils_Tuple3(147, 129, 255)))),
+			A3(
+			$author$project$PieChart$createDataSet,
+			'Work',
+			8,
+			A2(
+				$tesk9$palette$TransparentColor$fromColor,
+				$tesk9$palette$TransparentColor$opaque,
+				$tesk9$palette$SolidColor$fromRGB(
+					_Utils_Tuple3(255, 104, 107)))),
+			A3(
+			$author$project$PieChart$createDataSet,
+			'Wifey',
+			5,
+			A2(
+				$tesk9$palette$TransparentColor$fromColor,
+				$tesk9$palette$TransparentColor$opaque,
+				$tesk9$palette$SolidColor$fromRGB(
+					_Utils_Tuple3(255, 112, 166)))),
+			A3(
+			$author$project$PieChart$createDataSet,
+			'Hobbies',
+			2,
+			A2(
+				$tesk9$palette$TransparentColor$fromColor,
+				$tesk9$palette$TransparentColor$opaque,
+				$tesk9$palette$SolidColor$fromRGB(
+					_Utils_Tuple3(123, 241, 168))))
+		]));
+var $author$project$PieChart$setTooltipWidth = F2(
+	function (tw, _v0) {
 		var options = _v0.a;
 		return $author$project$PieChart$PieChartOptionsC(
 			_Utils_update(
 				options,
 				{
-					chartDimensions: A2($author$project$LineChart$Types$setHeight, ch, options.chartDimensions)
+					tooltipDimensions: A2($author$project$LineChart$Types$setWidth, tw, options.tooltipDimensions)
 				}));
 	});
-var $author$project$PieChart$setChartWidth = F2(
-	function (cw, _v0) {
-		var options = _v0.a;
-		return $author$project$PieChart$PieChartOptionsC(
-			_Utils_update(
-				options,
-				{
-					chartDimensions: A2($author$project$LineChart$Types$setWidth, cw, options.chartDimensions)
-				}));
-	});
-var $author$project$Main$pieOptions = A2(
-	$author$project$PieChart$setChartHeight,
-	800,
-	A2($author$project$PieChart$setChartWidth, 1200, $author$project$PieChart$defaultPieChartOptions));
+var $author$project$Main$pieOptions2 = A2($author$project$PieChart$setTooltipWidth, 200, $author$project$Main$commonPieOptions);
 var $author$project$Main$view = function (model) {
 	return A2(
 		$elm$html$Html$div,
@@ -7506,7 +7579,8 @@ var $author$project$Main$view = function (model) {
 				A4($author$project$LineChart$lineChart, $author$project$Main$options3, $author$project$Main$data3, $author$project$Main$ChartMessage3, model.chartModel3),
 				A4($author$project$LineChart$lineChart, $author$project$Main$options4, $author$project$Main$data4, $author$project$Main$ChartMessage4, model.chartModel4),
 				A4($author$project$LineChart$lineChart, $author$project$Main$options5, $author$project$Main$data5, $author$project$Main$ChartMessage5, model.chartModel5),
-				A4($author$project$PieChart$pieChart, $author$project$Main$pieOptions, $author$project$Main$pieData, $author$project$Main$PieMessage1, model.pieModel1)
+				A4($author$project$PieChart$pieChart, $author$project$Main$commonPieOptions, $author$project$Main$pieData1, $author$project$Main$PieMessage1, model.pieModel1),
+				A4($author$project$PieChart$pieChart, $author$project$Main$pieOptions2, $author$project$Main$pieData2, $author$project$Main$PieMessage2, model.pieModel2)
 			]));
 };
 var $author$project$Main$main = $elm$browser$Browser$sandbox(

@@ -352,11 +352,11 @@ pieChart (PieChartOptionsC options) (PieChartDataC data) toMsg (PieModelC model)
     cy = dy + r
 
     unwrappedData = map (\(PieChartDataSetC d) -> d) data
-    sortedData = sortBy .value unwrappedData
+    sortedData = sortBy .value unwrappedData |> reverse
     total = sum <| map .value unwrappedData
 
     sectors : List Sector
-    sectors = reverse <| .sectorList <| foldl (\datum {accumAngle, sectorList} ->
+    sectors = .sectorList <| foldl (\datum {accumAngle, sectorList} ->
         let
           newAccumAngle = accumAngle - (datum.value * 2 * pi / total)
           newSector =
@@ -373,7 +373,18 @@ pieChart (PieChartOptionsC options) (PieChartDataC data) toMsg (PieModelC model)
     moveTo (Chart p) = "M " ++ fromFloat p.x ++ "," ++ fromFloat p.y
     moveToCentre = moveTo origin
     lineTo (Chart p) = "L " ++ fromFloat p.x ++ "," ++ fromFloat p.y
-    arc (Chart p) angle direction = intersperse " " [ "A", fromFloat r, fromFloat r, fromFloat angle, "0", fromInt direction, fromFloat p.x, fromFloat p.y ] |> String.concat
+    arc rd (Chart p) angle direction =
+      intersperse " "
+        [ "A"
+        , fromFloat rd
+        , fromFloat rd
+        , fromFloat angle
+        , "0"
+        , fromInt direction
+        , fromFloat p.x
+        , fromFloat p.y
+        ]
+      |> String.concat
     lineToCentre = "L " ++ fromFloat cx ++ "," ++ fromFloat cy
 
     fromExtended sector d =
@@ -395,7 +406,7 @@ pieChart (PieChartOptionsC options) (PieChartDataC data) toMsg (PieModelC model)
         Svg.path
           [ [ moveToCentre
             , lineTo <| fromExtended sector 0
-            , arc (toExtended sector 0) angle 1
+            , arc r (toExtended sector 0) angle 1
             , lineToCentre
             ]
             |> intersperse " " >> String.concat >> SA.d
@@ -469,9 +480,9 @@ pieChart (PieChartOptionsC options) (PieChartDataC data) toMsg (PieModelC model)
               Svg.path
               [ [ moveTo <| fromExtended sector 2
                 , lineTo <| fromExtended sector 7
-                , arc (toExtended sector 7) angle 1
+                , arc (r + 7) (toExtended sector 7) angle 1
                 , lineTo <| toExtended sector 2
-                , arc (fromExtended sector 2) angle 0
+                , arc (r + 2) (fromExtended sector 2) angle 0
                 ]
                 |> intersperse " " >> String.concat >> SA.d
               , SA.strokeWidth "2"
