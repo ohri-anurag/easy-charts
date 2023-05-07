@@ -7,139 +7,143 @@ import Palette.X11 exposing (..)
 import String exposing (fromFloat, fromInt)
 import TransparentColor exposing (fromColor, opaque)
 
-import LineChart exposing(..)
-import PieChart exposing(..)
+import LineChart as L
+import PieChart as P
 
 type alias Flags = { screenHeight : Int, screenWidth : Int }
 
 type alias Model =
-  { chartModel1: ChartModel
-  , chartModel2: ChartModel
-  , chartModel3: ChartModel
-  , chartModel4: ChartModel
-  , chartModel5: ChartModel
-  , pieModel1 : PieModel
+  { chartModel1 : L.ChartModel
+  , chartModel2 : L.ChartModel
+  , chartModel3 : L.ChartModel
+  , chartModel4 : L.ChartModel
+  , chartModel5 : L.ChartModel
+  , pieModel1 : P.PieModel
   }
 
 type Msg
   = NoOp
-  | ChartMessage1 ChartMsg
-  | ChartMessage2 ChartMsg
-  | ChartMessage3 ChartMsg
-  | ChartMessage4 ChartMsg
-  | ChartMessage5 ChartMsg
-  | PieMessage1 PieMsg
+  | ChartMessage1 L.ChartMsg
+  | ChartMessage2 L.ChartMsg
+  | ChartMessage3 L.ChartMsg
+  | ChartMessage4 L.ChartMsg
+  | ChartMessage5 L.ChartMsg
+  | PieMessage1 P.PieMsg
 
 init : Model
 init =
-  { chartModel1 = initChartModel
-  , chartModel2 = initChartModel
-  , chartModel3 = initChartModel
-  , chartModel4 = initChartModel
-  , chartModel5 = initChartModel
-  , pieModel1 = initPieModel
+  { chartModel1 = L.initChartModel
+  , chartModel2 = L.initChartModel
+  , chartModel3 = L.initChartModel
+  , chartModel4 = L.initChartModel
+  , chartModel5 = L.initChartModel
+  , pieModel1 = P.initPieModel
   }
 
 view : Model -> Html Msg
 view model = div
   []
-  [ lineChart options data ChartMessage1 model.chartModel1
-  , lineChart options2 data2 ChartMessage2 model.chartModel2
-  , lineChart options3 data3 ChartMessage3 model.chartModel3
-  , lineChart options4 data4 ChartMessage4 model.chartModel4
-  , lineChart options5 data5 ChartMessage5 model.chartModel5
-  , pieChart (PieChartOptionsC { width = 600, height = 600 })
-    (PieChartDataC
-      -- (map (\i -> { color = fromColor opaque blue , value = 25 , label = "Q1" }) (range 1 90))
-      [ { color = fromColor opaque blue , value = 25 , label = "Q1" }
-      , { color = fromColor opaque red , value = 25 , label = "Q2" }
-      , { color = fromColor opaque green , value = 25 , label = "Q3" }
-      , { color = fromColor opaque aquamarine , value = 25 , label = "Q4" }
-      , { color = fromColor opaque magenta , value = 25 , label = "Q5" }
-      ]
-    ) PieMessage1 model.pieModel1
+  [ L.lineChart options data ChartMessage1 model.chartModel1
+  , L.lineChart options2 data2 ChartMessage2 model.chartModel2
+  , L.lineChart options3 data3 ChartMessage3 model.chartModel3
+  , L.lineChart options4 data4 ChartMessage4 model.chartModel4
+  , L.lineChart options5 data5 ChartMessage5 model.chartModel5
+  , P.pieChart pieOptions pieData PieMessage1 model.pieModel1
   ]
 
 update : Msg -> Model -> Model
 update msg model =
   case msg of
-    ChartMessage1 chartMsg -> { model | chartModel1 = updateChartModel chartMsg model.chartModel1 }
-    ChartMessage2 chartMsg -> { model | chartModel2 = updateChartModel chartMsg model.chartModel2 }
-    ChartMessage3 chartMsg -> { model | chartModel3 = updateChartModel chartMsg model.chartModel3 }
-    ChartMessage4 chartMsg -> { model | chartModel4 = updateChartModel chartMsg model.chartModel4 }
-    ChartMessage5 chartMsg -> { model | chartModel5 = updateChartModel chartMsg model.chartModel5 }
-    PieMessage1 pieMsg -> { model | pieModel1 = updatePieModel pieMsg model.pieModel1 }
+    ChartMessage1 chartMsg -> { model | chartModel1 = L.updateChartModel chartMsg model.chartModel1 }
+    ChartMessage2 chartMsg -> { model | chartModel2 = L.updateChartModel chartMsg model.chartModel2 }
+    ChartMessage3 chartMsg -> { model | chartModel3 = L.updateChartModel chartMsg model.chartModel3 }
+    ChartMessage4 chartMsg -> { model | chartModel4 = L.updateChartModel chartMsg model.chartModel4 }
+    ChartMessage5 chartMsg -> { model | chartModel5 = L.updateChartModel chartMsg model.chartModel5 }
+    PieMessage1 pieMsg -> { model | pieModel1 = P.updatePieModel pieMsg model.pieModel1 }
     NoOp -> model
 
-commonOptions : LineChartOptions
+commonOptions : L.LineChartOptions
 commonOptions =
-  setChartWidth 1200 defaultLineChartOptions
-  |> setChartHeight 800
-  |> setPointRadius 4
+  L.setChartWidth 1200 L.defaultLineChartOptions
+  |> L.setChartHeight 800
+  |> L.setPointRadius 4
 
-data : LineChartData
+data : L.LineChartData
 data =
-  createData (List.map .date rawData)
-    [ createDataSet "Anurag" (List.map .anuragWeight rawData) <| fromColor opaque green
+  L.createData (List.map .date rawData)
+    [ L.createDataSet "Anurag" (List.map .anuragWeight rawData) <| fromColor opaque green
     ]
 
-options : LineChartOptions
+options : L.LineChartOptions
 options = commonOptions
-  |> setLabelRotation -50
+  |> L.setLabelRotation -50
 
-data2 : LineChartData
+data2 : L.LineChartData
 data2 =
-  createData ["Mon", "Tue", "Wed", "Thu", "Fri"]
-    [ createDataSet "Wakeup Time" [7,8,9,8,7] <| fromColor opaque blue
-    , createDataSet "Sleeping Time" [23,22,21,22,23] <| fromColor opaque red
+  L.createData ["Mon", "Tue", "Wed", "Thu", "Fri"]
+    [ L.createDataSet "Wakeup Time" [7,8,9,8,7] <| fromColor opaque blue
+    , L.createDataSet "Sleeping Time" [23,22,21,22,23] <| fromColor opaque red
     ]
 
-options2 : LineChartOptions
+options2 : L.LineChartOptions
 options2 = commonOptions
-  |> setTooltipWidth 150
+  |> L.setTooltipWidth 150
 
-data3 : LineChartData
+data3 : L.LineChartData
 data3 =
-  createData ["Mon", "Tue", "Wed", "Thu", "Fri"]
-    [ createDataSet "Toosla Corp" [0.147,0.148,0.149,0.148,0.147] <| fromColor opaque brown
-    , createDataSet "Abode Limited" [0.1523,0.1522,0.1521,0.1522,0.1523] <| fromColor opaque aquamarine
+  L.createData ["Mon", "Tue", "Wed", "Thu", "Fri"]
+    [ L.createDataSet "Toosla Corp" [0.147,0.148,0.149,0.148,0.147] <| fromColor opaque brown
+    , L.createDataSet "Abode Limited" [0.1523,0.1522,0.1521,0.1522,0.1523] <| fromColor opaque aquamarine
     ]
 
-options3 : LineChartOptions
+options3 : L.LineChartOptions
 options3 = commonOptions
-  |> setValueWidth 150
-  |> setTooltipWidth 170
+  |> L.setValueWidth 150
+  |> L.setTooltipWidth 170
 
-data4 : LineChartData
+data4 : L.LineChartData
 data4 =
   let
     xs = range 0 20
   in
-  createData (map fromInt xs)
-    [ createDataSet "x" (map (\x -> toFloat x) xs) <| fromColor opaque lightGreen
-    , createDataSet "x^2" (map (\x -> toFloat (x^2)) xs) <| fromColor opaque darkGreen
-    , createDataSet "x^3" (map (\x -> toFloat (x^3)) xs) <| fromColor opaque darkRed
+  L.createData (map fromInt xs)
+    [ L.createDataSet "x" (map (\x -> toFloat x) xs) <| fromColor opaque lightGreen
+    , L.createDataSet "x^2" (map (\x -> toFloat (x^2)) xs) <| fromColor opaque darkGreen
+    , L.createDataSet "x^3" (map (\x -> toFloat (x^3)) xs) <| fromColor opaque darkRed
     ]
 
-options4 : LineChartOptions
+options4 : L.LineChartOptions
 options4 = commonOptions
-  |> setLegendWidth 50
+  |> L.setLegendWidth 50
 
-data5 : LineChartData
+data5 : L.LineChartData
 data5 =
   let
     ds = range 0 360
     xs = map (toFloat >> degrees) ds
   in
-  createData (map fromInt ds)
-    [ createDataSet "sin x" (map (\x -> sin x) xs) <| fromColor opaque brown
-    , createDataSet "cos x" (map (\x -> cos x) xs) <| fromColor opaque aquamarine
+  L.createData (map fromInt ds)
+    [ L.createDataSet "sin x" (map (\x -> sin x) xs) <| fromColor opaque brown
+    , L.createDataSet "cos x" (map (\x -> cos x) xs) <| fromColor opaque aquamarine
     ]
 
-options5 : LineChartOptions
+options5 : L.LineChartOptions
 options5 = commonOptions
-  |> setPointRadius 2
-  |> setTooltipWidth 210
+  |> L.setPointRadius 2
+  |> L.setTooltipWidth 210
+
+pieData : P.PieChartData
+pieData = P.createData
+  [ P.createDataSet "Q1" 25 (fromColor opaque blue)
+  , P.createDataSet "Q2" 25 (fromColor opaque red)
+  , P.createDataSet "Q3" 25 (fromColor opaque green)
+  , P.createDataSet "Q4" 25 (fromColor opaque aquamarine)
+  , P.createDataSet "Q5" 25 (fromColor opaque magenta)
+  ]
+
+pieOptions : P.PieChartOptions
+pieOptions = P.setChartWidth 1200 P.defaultPieChartOptions
+  |> P.setChartHeight 800
 
 main = sandbox {view = view, update = update, init = init}
 

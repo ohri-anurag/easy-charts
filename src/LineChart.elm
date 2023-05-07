@@ -52,7 +52,7 @@ import TransparentColor exposing (..)
 import LineChart.Horizontals as H
 import LineChart.Legend exposing (legends)
 import LineChart.Lines as L
-import LineChart.Types exposing (Box, ChartPoint)
+import LineChart.Types exposing (..)
 import LineChart.Verticals as V
 import SolidColor exposing (fromRGB)
 import String exposing (fromInt)
@@ -486,20 +486,6 @@ type alias LineChartOptionsR =
   , legendWidth : Int
   , legendSpacing : Int
   }
-
-type alias Dimensions =
-  { width : Int
-  , height : Int
-  }
-
-toPair : Dimensions -> (Int, Int)
-toPair d = (d.width, d.height)
-
-setWidth : Int -> Dimensions -> Dimensions
-setWidth w dimensions = { dimensions | width = w }
-
-setHeight : Int -> Dimensions -> Dimensions
-setHeight h dimensions = { dimensions | height = h }
 
 {-|
 Default options for configuring the line chart.

@@ -5305,18 +5305,33 @@ var $author$project$Main$ChartMessage4 = function (a) {
 var $author$project$Main$ChartMessage5 = function (a) {
 	return {$: 'ChartMessage5', a: a};
 };
-var $author$project$PieChart$PieChartDataC = function (a) {
-	return {$: 'PieChartDataC', a: a};
-};
-var $author$project$PieChart$PieChartOptionsC = function (a) {
-	return {$: 'PieChartOptionsC', a: a};
-};
 var $author$project$Main$PieMessage1 = function (a) {
 	return {$: 'PieMessage1', a: a};
 };
-var $tesk9$palette$SolidColor$Color = function (a) {
+var $author$project$LineChart$LineChartDataC = function (a) {
+	return {$: 'LineChartDataC', a: a};
+};
+var $author$project$LineChart$createData = F2(
+	function (labels, datasets) {
+		return $author$project$LineChart$LineChartDataC(
+			{dataSets: datasets, labels: labels});
+	});
+var $author$project$LineChart$LineChartDataSetC = function (a) {
+	return {$: 'LineChartDataSetC', a: a};
+};
+var $author$project$LineChart$createDataSet = F3(
+	function (label, heights, color) {
+		return $author$project$LineChart$LineChartDataSetC(
+			{color: color, heights: heights, label: label});
+	});
+var $tesk9$palette$TransparentColor$Color = function (a) {
 	return {$: 'Color', a: a};
 };
+var $elm$core$Basics$composeR = F3(
+	function (f, g, x) {
+		return g(
+			f(x));
+	});
 var $tesk9$palette$Internal$Color$RGBA = function (a) {
 	return {$: 'RGBA', a: a};
 };
@@ -5344,55 +5359,6 @@ var $tesk9$palette$Internal$Color$fromRGBA = function (values) {
 	return $tesk9$palette$Internal$Color$RGBA(
 		$tesk9$palette$Internal$RGBA$fromChannels(values));
 };
-var $tesk9$palette$Internal$Opacity$Opacity = function (a) {
-	return {$: 'Opacity', a: a};
-};
-var $elm$core$Basics$composeL = F3(
-	function (g, f, x) {
-		return g(
-			f(x));
-	});
-var $tesk9$palette$Internal$Opacity$custom = A2(
-	$elm$core$Basics$composeL,
-	$tesk9$palette$Internal$Opacity$Opacity,
-	A2($elm$core$Basics$clamp, 0, 1.0));
-var $tesk9$palette$Internal$Opacity$opaque = $tesk9$palette$Internal$Opacity$custom(1.0);
-var $tesk9$palette$SolidColor$fromRGB = function (_v0) {
-	var red = _v0.a;
-	var green = _v0.b;
-	var blue = _v0.c;
-	return $tesk9$palette$SolidColor$Color(
-		$tesk9$palette$Internal$Color$fromRGBA(
-			{alpha: $tesk9$palette$Internal$Opacity$opaque, blue: blue, green: green, red: red}));
-};
-var $tesk9$palette$Palette$X11$aquamarine = $tesk9$palette$SolidColor$fromRGB(
-	_Utils_Tuple3(127, 255, 212));
-var $tesk9$palette$Palette$X11$blue = $tesk9$palette$SolidColor$fromRGB(
-	_Utils_Tuple3(0, 0, 255));
-var $author$project$LineChart$LineChartDataC = function (a) {
-	return {$: 'LineChartDataC', a: a};
-};
-var $author$project$LineChart$createData = F2(
-	function (labels, datasets) {
-		return $author$project$LineChart$LineChartDataC(
-			{dataSets: datasets, labels: labels});
-	});
-var $author$project$LineChart$LineChartDataSetC = function (a) {
-	return {$: 'LineChartDataSetC', a: a};
-};
-var $author$project$LineChart$createDataSet = F3(
-	function (label, heights, color) {
-		return $author$project$LineChart$LineChartDataSetC(
-			{color: color, heights: heights, label: label});
-	});
-var $tesk9$palette$TransparentColor$Color = function (a) {
-	return {$: 'Color', a: a};
-};
-var $elm$core$Basics$composeR = F3(
-	function (f, g, x) {
-		return g(
-			f(x));
-	});
 var $tesk9$palette$TransparentColor$fromRGBA = A2($elm$core$Basics$composeR, $tesk9$palette$Internal$Color$fromRGBA, $tesk9$palette$TransparentColor$Color);
 var $elm$core$Basics$negate = function (n) {
 	return -n;
@@ -5487,6 +5453,30 @@ var $tesk9$palette$TransparentColor$fromColor = F2(
 		return $tesk9$palette$TransparentColor$fromRGBA(
 			{alpha: opacity, blue: b, green: g, red: r});
 	});
+var $tesk9$palette$SolidColor$Color = function (a) {
+	return {$: 'Color', a: a};
+};
+var $tesk9$palette$Internal$Opacity$Opacity = function (a) {
+	return {$: 'Opacity', a: a};
+};
+var $elm$core$Basics$composeL = F3(
+	function (g, f, x) {
+		return g(
+			f(x));
+	});
+var $tesk9$palette$Internal$Opacity$custom = A2(
+	$elm$core$Basics$composeL,
+	$tesk9$palette$Internal$Opacity$Opacity,
+	A2($elm$core$Basics$clamp, 0, 1.0));
+var $tesk9$palette$Internal$Opacity$opaque = $tesk9$palette$Internal$Opacity$custom(1.0);
+var $tesk9$palette$SolidColor$fromRGB = function (_v0) {
+	var red = _v0.a;
+	var green = _v0.b;
+	var blue = _v0.c;
+	return $tesk9$palette$SolidColor$Color(
+		$tesk9$palette$Internal$Color$fromRGBA(
+			{alpha: $tesk9$palette$Internal$Opacity$opaque, blue: blue, green: green, red: red}));
+};
 var $tesk9$palette$Palette$X11$green = $tesk9$palette$SolidColor$fromRGB(
 	_Utils_Tuple3(0, 128, 0));
 var $tesk9$palette$TransparentColor$opaque = $tesk9$palette$Internal$Opacity$opaque;
@@ -5657,6 +5647,8 @@ var $author$project$Main$data = A2(
 				$author$project$Main$rawData),
 			A2($tesk9$palette$TransparentColor$fromColor, $tesk9$palette$TransparentColor$opaque, $tesk9$palette$Palette$X11$green))
 		]));
+var $tesk9$palette$Palette$X11$blue = $tesk9$palette$SolidColor$fromRGB(
+	_Utils_Tuple3(0, 0, 255));
 var $tesk9$palette$Palette$X11$red = $tesk9$palette$SolidColor$fromRGB(
 	_Utils_Tuple3(255, 0, 0));
 var $author$project$Main$data2 = A2(
@@ -5678,6 +5670,8 @@ var $author$project$Main$data2 = A2(
 				[23, 22, 21, 22, 23]),
 			A2($tesk9$palette$TransparentColor$fromColor, $tesk9$palette$TransparentColor$opaque, $tesk9$palette$Palette$X11$red))
 		]));
+var $tesk9$palette$Palette$X11$aquamarine = $tesk9$palette$SolidColor$fromRGB(
+	_Utils_Tuple3(127, 255, 212));
 var $tesk9$palette$Palette$X11$brown = $tesk9$palette$SolidColor$fromRGB(
 	_Utils_Tuple3(165, 42, 42));
 var $author$project$Main$data3 = A2(
@@ -6646,7 +6640,7 @@ var $author$project$LineChart$processInputData = function (_v0) {
 var $elm$svg$Svg$Attributes$r = _VirtualDom_attribute('r');
 var $elm$core$Basics$sqrt = _Basics_sqrt;
 var $elm$svg$Svg$svg = $elm$svg$Svg$trustedNode('svg');
-var $author$project$LineChart$toPair = function (d) {
+var $author$project$LineChart$Types$toPair = function (d) {
 	return _Utils_Tuple2(d.width, d.height);
 };
 var $elm$svg$Svg$g = $elm$svg$Svg$trustedNode('g');
@@ -6744,10 +6738,10 @@ var $author$project$LineChart$lineChart = F4(
 					]);
 			}
 		};
-		var _v2 = $author$project$LineChart$toPair(options.tooltipDimensions);
+		var _v2 = $author$project$LineChart$Types$toPair(options.tooltipDimensions);
 		var tw = _v2.a;
 		var th = _v2.b;
-		var _v3 = $author$project$LineChart$toPair(options.chartDimensions);
+		var _v3 = $author$project$LineChart$Types$toPair(options.chartDimensions);
 		var w = _v3.a;
 		var h = _v3.b;
 		if (labelledDataMaybe.$ === 'Nothing') {
@@ -6822,8 +6816,6 @@ var $author$project$LineChart$lineChart = F4(
 									[model.hovered]))))));
 		}
 	});
-var $tesk9$palette$Palette$X11$magenta = $tesk9$palette$SolidColor$fromRGB(
-	_Utils_Tuple3(255, 0, 255));
 var $author$project$LineChart$LineChartOptionsC = function (a) {
 	return {$: 'LineChartOptionsC', a: a};
 };
@@ -6838,7 +6830,7 @@ var $author$project$LineChart$defaultLineChartOptions = $author$project$LineChar
 		tooltipDimensions: {height: 50, width: 120},
 		valueWidth: 100
 	});
-var $author$project$LineChart$setHeight = F2(
+var $author$project$LineChart$Types$setHeight = F2(
 	function (h, dimensions) {
 		return _Utils_update(
 			dimensions,
@@ -6851,10 +6843,10 @@ var $author$project$LineChart$setChartHeight = F2(
 			_Utils_update(
 				options,
 				{
-					chartDimensions: A2($author$project$LineChart$setHeight, ch, options.chartDimensions)
+					chartDimensions: A2($author$project$LineChart$Types$setHeight, ch, options.chartDimensions)
 				}));
 	});
-var $author$project$LineChart$setWidth = F2(
+var $author$project$LineChart$Types$setWidth = F2(
 	function (w, dimensions) {
 		return _Utils_update(
 			dimensions,
@@ -6867,7 +6859,7 @@ var $author$project$LineChart$setChartWidth = F2(
 			_Utils_update(
 				options,
 				{
-					chartDimensions: A2($author$project$LineChart$setWidth, cw, options.chartDimensions)
+					chartDimensions: A2($author$project$LineChart$Types$setWidth, cw, options.chartDimensions)
 				}));
 	});
 var $author$project$LineChart$setPointRadius = F2(
@@ -6903,7 +6895,7 @@ var $author$project$LineChart$setTooltipWidth = F2(
 			_Utils_update(
 				options,
 				{
-					tooltipDimensions: A2($author$project$LineChart$setWidth, tw, options.tooltipDimensions)
+					tooltipDimensions: A2($author$project$LineChart$Types$setWidth, tw, options.tooltipDimensions)
 				}));
 	});
 var $author$project$Main$options2 = A2($author$project$LineChart$setTooltipWidth, 150, $author$project$Main$commonOptions);
@@ -7149,29 +7141,33 @@ var $author$project$PieChart$pieChart = F4(
 		var options = _v0.a;
 		var data = _v1.a;
 		var model = _v2.a;
-		var tw = 100;
-		var w = (options.width - 20) - (2 * tw);
+		var unwrappedData = A2(
+			$elm$core$List$map,
+			function (_v14) {
+				var d = _v14.a;
+				return d;
+			},
+			data);
 		var total = $elm$core$List$sum(
 			A2(
 				$elm$core$List$map,
 				function ($) {
 					return $.value;
 				},
-				data));
-		var th = 50;
+				unwrappedData));
 		var sortedData = A2(
 			$elm$core$List$sortBy,
 			function ($) {
 				return $.value;
 			},
-			data);
+			unwrappedData);
 		var sectors = $elm$core$List$reverse(
 			A3(
 				$elm$core$List$foldl,
 				F2(
-					function (datum, _v11) {
-						var accumAngle = _v11.accumAngle;
-						var sectorList = _v11.sectorList;
+					function (datum, _v13) {
+						var accumAngle = _v13.accumAngle;
+						var sectorList = _v13.sectorList;
 						var newAccumAngle = accumAngle - (((datum.value * 2) * $elm$core$Basics$pi) / total);
 						var newSector = {beginAngle: accumAngle, datum: datum, endAngle: newAccumAngle};
 						return {
@@ -7181,101 +7177,38 @@ var $author$project$PieChart$pieChart = F4(
 					}),
 				{accumAngle: $elm$core$Basics$pi / 2, sectorList: _List_Nil},
 				sortedData).sectorList);
-		var moveTo = function (_v10) {
-			var p = _v10.a;
+		var moveTo = function (_v12) {
+			var p = _v12.a;
 			return 'M ' + ($elm$core$String$fromFloat(p.x) + (',' + $elm$core$String$fromFloat(p.y)));
 		};
-		var lineTo = function (_v9) {
-			var p = _v9.a;
+		var lineTo = function (_v11) {
+			var p = _v11.a;
 			return 'L ' + ($elm$core$String$fromFloat(p.x) + (',' + $elm$core$String$fromFloat(p.y)));
 		};
-		var h = (options.height - 20) - (2 * th);
+		var legendOptions = {
+			data: A2(
+				$elm$core$List$map,
+				function (d) {
+					return _Utils_Tuple2(d.color, d.label);
+				},
+				unwrappedData),
+			spacing: 50,
+			width: 50
+		};
+		var _v3 = $author$project$LineChart$Types$toPair(options.tooltipDimensions);
+		var tw = _v3.a;
+		var th = _v3.b;
+		var _v4 = $author$project$LineChart$Types$toPair(options.chartDimensions);
+		var cw = _v4.a;
+		var ch = _v4.b;
+		var h = ((0.95 * ch) - 20) - (2 * th);
+		var legendBox = {h: 0.05 * ch, w: cw, x: 0, y: 0};
+		var w = (cw - 20) - (2 * tw);
 		var minDimension = (_Utils_cmp(w, h) < 0) ? w : h;
 		var r = minDimension / 2;
-		var dy = (th + 10) + ((h - (2 * r)) / 2);
-		var dx = (tw + 10) + ((w - (2 * r)) / 2);
-		var origin = $author$project$PieChart$Chart(
-			{x: dx + r, y: dy + r});
-		var fromExtended = F2(
-			function (sector, d) {
-				return A2(
-					$author$project$PieChart$toChartCoordinates,
-					origin,
-					$author$project$PieChart$polarToCartesian(
-						_Utils_Tuple2(r + d, sector.beginAngle)));
-			});
-		var moveToCentre = moveTo(origin);
-		var toExtended = F2(
-			function (sector, d) {
-				return A2(
-					$author$project$PieChart$toChartCoordinates,
-					origin,
-					$author$project$PieChart$polarToCartesian(
-						_Utils_Tuple2(r + d, sector.endAngle)));
-			});
-		var tooltipPoint = function (sector) {
-			var r2 = r + 8;
-			var eqAngle = F2(
-				function (a1, a2) {
-					return _Utils_cmp(
-						$elm$core$Basics$abs(a1 - a2),
-						2 * 0.0175) < 1;
-				});
-			var _v7 = A2(
-				$author$project$PieChart$toCartesianCoordinate,
-				origin,
-				A2(toExtended, sector, 0));
-			var p2 = _v7.a;
-			var _v8 = A2(
-				$author$project$PieChart$toCartesianCoordinate,
-				origin,
-				A2(fromExtended, sector, 0));
-			var p1 = _v8.a;
-			var midPoint = {x: (p1.x + p2.x) / 2, y: (p1.y + p2.y) / 2};
-			var theta = $author$project$PieChart$getAngle(
-				$author$project$PieChart$Cartesian(midPoint));
-			var p = ((A2(eqAngle, theta, 0) || (A2(eqAngle, theta, $elm$core$Basics$pi / 2) || (A2(eqAngle, theta, $elm$core$Basics$pi) || A2(eqAngle, theta, (3 * $elm$core$Basics$pi) / 2)))) ? $author$project$PieChart$translate(
-				_Utils_Tuple2(
-					(tw / 2) * $elm$core$Basics$cos(theta),
-					(th / 2) * $elm$core$Basics$sin(theta))) : $author$project$PieChart$translate(
-				_Utils_Tuple2(
-					(tw / 2) * $author$project$PieChart$signum(midPoint.x),
-					(th / 2) * $author$project$PieChart$signum(midPoint.y))))(
-				$author$project$PieChart$polarToCartesian(
-					_Utils_Tuple2(r2, theta)));
-			return A2($author$project$PieChart$toChartCoordinates, origin, p);
-		};
-		var toTooltipOptions = function (sector) {
-			return {
-				height: th,
-				label: sector.datum.label,
-				percentage: (sector.datum.value * 100) / total,
-				point: tooltipPoint(sector),
-				value: sector.datum.value,
-				width: tw
-			};
-		};
-		var cy = dy + r;
-		var cx = dx + r;
-		var drawBoundary = function (sector) {
-			var _v6 = A2(fromExtended, sector, 2);
-			var x = _v6.a.x;
-			var y = _v6.a.y;
-			return $author$project$LineChart$Lines$line(
-				{
-					shapeRendering: $author$project$LineChart$Lines$GeometricPrecision,
-					stroke: A2($tesk9$palette$TransparentColor$fromColor, $tesk9$palette$TransparentColor$opaque, $tesk9$palette$Palette$X11$white),
-					strokeWidth: 2,
-					x1: cx,
-					x2: x,
-					y1: cy,
-					y2: y
-				});
-		};
-		var lineToCentre = 'L ' + ($elm$core$String$fromFloat(cx) + (',' + $elm$core$String$fromFloat(cy)));
 		var arc = F3(
-			function (_v5, angle, direction) {
-				var p = _v5.a;
+			function (_v10, angle, direction) {
+				var p = _v10.a;
 				return $elm$core$String$concat(
 					A2(
 						$elm$core$List$intersperse,
@@ -7292,14 +7225,53 @@ var $author$project$PieChart$pieChart = F4(
 								$elm$core$String$fromFloat(p.y)
 							])));
 			});
+		var dx = (tw + 10) + ((w - (2 * r)) / 2);
+		var cx = dx + r;
+		var dy = (th + 10) + ((h - (2 * r)) / 2);
+		var cy = dy + r;
+		var lineToCentre = 'L ' + ($elm$core$String$fromFloat(cx) + (',' + $elm$core$String$fromFloat(cy)));
+		var origin = $author$project$PieChart$Chart(
+			{x: dx + r, y: dy + r});
+		var fromExtended = F2(
+			function (sector, d) {
+				return A2(
+					$author$project$PieChart$toChartCoordinates,
+					origin,
+					$author$project$PieChart$polarToCartesian(
+						_Utils_Tuple2(r + d, sector.beginAngle)));
+			});
+		var drawBoundary = function (sector) {
+			var _v9 = A2(fromExtended, sector, 2);
+			var x = _v9.a.x;
+			var y = _v9.a.y;
+			return $author$project$LineChart$Lines$line(
+				{
+					shapeRendering: $author$project$LineChart$Lines$GeometricPrecision,
+					stroke: A2($tesk9$palette$TransparentColor$fromColor, $tesk9$palette$TransparentColor$opaque, $tesk9$palette$Palette$X11$white),
+					strokeWidth: 2,
+					x1: cx,
+					x2: x,
+					y1: cy,
+					y2: y
+				});
+		};
+		var moveToCentre = moveTo(origin);
+		var toExtended = F2(
+			function (sector, d) {
+				return A2(
+					$author$project$PieChart$toChartCoordinates,
+					origin,
+					$author$project$PieChart$polarToCartesian(
+						_Utils_Tuple2(r + d, sector.endAngle)));
+			});
 		var drawSector = function (sector) {
 			var color = $tesk9$palette$TransparentColor$toRGBAString(
 				function () {
-					var _v4 = model.hovered;
-					if (_v4.$ === 'Nothing') {
+					var _v8 = model.hovered;
+					if (_v8.$ === 'Nothing') {
 						return sector.datum.color;
 					} else {
-						var s = _v4.a;
+						var s = _v8.a;
 						return _Utils_eq(s, sector) ? A2($tesk9$palette$TransparentColor$addLightness, -10, sector.datum.color) : sector.datum.color;
 					}
 				}());
@@ -7336,12 +7308,54 @@ var $author$project$PieChart$pieChart = F4(
 					]),
 				_List_Nil);
 		};
+		var tooltipPoint = function (sector) {
+			var r2 = r + 8;
+			var eqAngle = F2(
+				function (a1, a2) {
+					return _Utils_cmp(
+						$elm$core$Basics$abs(a1 - a2),
+						2 * 0.0175) < 1;
+				});
+			var _v6 = A2(
+				$author$project$PieChart$toCartesianCoordinate,
+				origin,
+				A2(toExtended, sector, 0));
+			var p2 = _v6.a;
+			var _v7 = A2(
+				$author$project$PieChart$toCartesianCoordinate,
+				origin,
+				A2(fromExtended, sector, 0));
+			var p1 = _v7.a;
+			var midPoint = {x: (p1.x + p2.x) / 2, y: (p1.y + p2.y) / 2};
+			var theta = $author$project$PieChart$getAngle(
+				$author$project$PieChart$Cartesian(midPoint));
+			var p = ((A2(eqAngle, theta, 0) || (A2(eqAngle, theta, $elm$core$Basics$pi / 2) || (A2(eqAngle, theta, $elm$core$Basics$pi) || A2(eqAngle, theta, (3 * $elm$core$Basics$pi) / 2)))) ? $author$project$PieChart$translate(
+				_Utils_Tuple2(
+					(tw / 2) * $elm$core$Basics$cos(theta),
+					(th / 2) * $elm$core$Basics$sin(theta))) : $author$project$PieChart$translate(
+				_Utils_Tuple2(
+					(tw / 2) * $author$project$PieChart$signum(midPoint.x),
+					(th / 2) * $author$project$PieChart$signum(midPoint.y))))(
+				$author$project$PieChart$polarToCartesian(
+					_Utils_Tuple2(r2, theta)));
+			return A2($author$project$PieChart$toChartCoordinates, origin, p);
+		};
+		var toTooltipOptions = function (sector) {
+			return {
+				height: th,
+				label: sector.datum.label,
+				percentage: (sector.datum.value * 100) / total,
+				point: tooltipPoint(sector),
+				value: sector.datum.value,
+				width: tw
+			};
+		};
 		var hoveredSector = function () {
-			var _v3 = model.hovered;
-			if (_v3.$ === 'Nothing') {
+			var _v5 = model.hovered;
+			if (_v5.$ === 'Nothing') {
 				return _List_Nil;
 			} else {
-				var sector = _v3.a;
+				var sector = _v5.a;
 				var angle = (360 * sector.datum.value) / total;
 				var outerPath = function () {
 					var color = $tesk9$palette$TransparentColor$toRGBAString(
@@ -7392,16 +7406,95 @@ var $author$project$PieChart$pieChart = F4(
 			$elm$svg$Svg$svg,
 			_List_fromArray(
 				[
-					A3($elm$core$Basics$composeR, $elm$core$String$fromInt, $elm$svg$Svg$Attributes$width, options.width),
-					A3($elm$core$Basics$composeR, $elm$core$String$fromInt, $elm$svg$Svg$Attributes$height, options.height),
+					A3($elm$core$Basics$composeR, $elm$core$String$fromInt, $elm$svg$Svg$Attributes$width, cw),
+					A3($elm$core$Basics$composeR, $elm$core$String$fromInt, $elm$svg$Svg$Attributes$height, ch),
 					A2($elm$html$Html$Attributes$style, 'font-family', 'sans-serif')
 				]),
 			_Utils_ap(
-				A2($elm$core$List$map, drawSector, sectors),
+				A2($author$project$LineChart$Legend$legends, legendBox, legendOptions),
 				_Utils_ap(
-					A2($elm$core$List$map, drawBoundary, sectors),
-					hoveredSector)));
+					A2($elm$core$List$map, drawSector, sectors),
+					_Utils_ap(
+						A2($elm$core$List$map, drawBoundary, sectors),
+						hoveredSector))));
 	});
+var $author$project$PieChart$PieChartDataC = function (a) {
+	return {$: 'PieChartDataC', a: a};
+};
+var $author$project$PieChart$createData = $author$project$PieChart$PieChartDataC;
+var $author$project$PieChart$PieChartDataSetC = function (a) {
+	return {$: 'PieChartDataSetC', a: a};
+};
+var $author$project$PieChart$createDataSet = F3(
+	function (label, height, color) {
+		return $author$project$PieChart$PieChartDataSetC(
+			{color: color, label: label, value: height});
+	});
+var $tesk9$palette$Palette$X11$magenta = $tesk9$palette$SolidColor$fromRGB(
+	_Utils_Tuple3(255, 0, 255));
+var $author$project$Main$pieData = $author$project$PieChart$createData(
+	_List_fromArray(
+		[
+			A3(
+			$author$project$PieChart$createDataSet,
+			'Q1',
+			25,
+			A2($tesk9$palette$TransparentColor$fromColor, $tesk9$palette$TransparentColor$opaque, $tesk9$palette$Palette$X11$blue)),
+			A3(
+			$author$project$PieChart$createDataSet,
+			'Q2',
+			25,
+			A2($tesk9$palette$TransparentColor$fromColor, $tesk9$palette$TransparentColor$opaque, $tesk9$palette$Palette$X11$red)),
+			A3(
+			$author$project$PieChart$createDataSet,
+			'Q3',
+			25,
+			A2($tesk9$palette$TransparentColor$fromColor, $tesk9$palette$TransparentColor$opaque, $tesk9$palette$Palette$X11$green)),
+			A3(
+			$author$project$PieChart$createDataSet,
+			'Q4',
+			25,
+			A2($tesk9$palette$TransparentColor$fromColor, $tesk9$palette$TransparentColor$opaque, $tesk9$palette$Palette$X11$aquamarine)),
+			A3(
+			$author$project$PieChart$createDataSet,
+			'Q5',
+			25,
+			A2($tesk9$palette$TransparentColor$fromColor, $tesk9$palette$TransparentColor$opaque, $tesk9$palette$Palette$X11$magenta))
+		]));
+var $author$project$PieChart$PieChartOptionsC = function (a) {
+	return {$: 'PieChartOptionsC', a: a};
+};
+var $author$project$PieChart$defaultPieChartOptions = $author$project$PieChart$PieChartOptionsC(
+	{
+		chartDimensions: {height: 600, width: 600},
+		legendSpacing: 50,
+		legendWidth: 100,
+		tooltipDimensions: {height: 50, width: 120}
+	});
+var $author$project$PieChart$setChartHeight = F2(
+	function (ch, _v0) {
+		var options = _v0.a;
+		return $author$project$PieChart$PieChartOptionsC(
+			_Utils_update(
+				options,
+				{
+					chartDimensions: A2($author$project$LineChart$Types$setHeight, ch, options.chartDimensions)
+				}));
+	});
+var $author$project$PieChart$setChartWidth = F2(
+	function (cw, _v0) {
+		var options = _v0.a;
+		return $author$project$PieChart$PieChartOptionsC(
+			_Utils_update(
+				options,
+				{
+					chartDimensions: A2($author$project$LineChart$Types$setWidth, cw, options.chartDimensions)
+				}));
+	});
+var $author$project$Main$pieOptions = A2(
+	$author$project$PieChart$setChartHeight,
+	800,
+	A2($author$project$PieChart$setChartWidth, 1200, $author$project$PieChart$defaultPieChartOptions));
 var $author$project$Main$view = function (model) {
 	return A2(
 		$elm$html$Html$div,
@@ -7413,41 +7506,7 @@ var $author$project$Main$view = function (model) {
 				A4($author$project$LineChart$lineChart, $author$project$Main$options3, $author$project$Main$data3, $author$project$Main$ChartMessage3, model.chartModel3),
 				A4($author$project$LineChart$lineChart, $author$project$Main$options4, $author$project$Main$data4, $author$project$Main$ChartMessage4, model.chartModel4),
 				A4($author$project$LineChart$lineChart, $author$project$Main$options5, $author$project$Main$data5, $author$project$Main$ChartMessage5, model.chartModel5),
-				A4(
-				$author$project$PieChart$pieChart,
-				$author$project$PieChart$PieChartOptionsC(
-					{height: 600, width: 600}),
-				$author$project$PieChart$PieChartDataC(
-					_List_fromArray(
-						[
-							{
-							color: A2($tesk9$palette$TransparentColor$fromColor, $tesk9$palette$TransparentColor$opaque, $tesk9$palette$Palette$X11$blue),
-							label: 'Q1',
-							value: 25
-						},
-							{
-							color: A2($tesk9$palette$TransparentColor$fromColor, $tesk9$palette$TransparentColor$opaque, $tesk9$palette$Palette$X11$red),
-							label: 'Q2',
-							value: 25
-						},
-							{
-							color: A2($tesk9$palette$TransparentColor$fromColor, $tesk9$palette$TransparentColor$opaque, $tesk9$palette$Palette$X11$green),
-							label: 'Q3',
-							value: 25
-						},
-							{
-							color: A2($tesk9$palette$TransparentColor$fromColor, $tesk9$palette$TransparentColor$opaque, $tesk9$palette$Palette$X11$aquamarine),
-							label: 'Q4',
-							value: 25
-						},
-							{
-							color: A2($tesk9$palette$TransparentColor$fromColor, $tesk9$palette$TransparentColor$opaque, $tesk9$palette$Palette$X11$magenta),
-							label: 'Q5',
-							value: 25
-						}
-						])),
-				$author$project$Main$PieMessage1,
-				model.pieModel1)
+				A4($author$project$PieChart$pieChart, $author$project$Main$pieOptions, $author$project$Main$pieData, $author$project$Main$PieMessage1, model.pieModel1)
 			]));
 };
 var $author$project$Main$main = $elm$browser$Browser$sandbox(

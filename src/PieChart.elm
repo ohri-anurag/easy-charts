@@ -1,13 +1,47 @@
-module PieChart exposing (..)
+module PieChart exposing
+  ( PieModel
+  , PieMsg
+  , initPieModel
+  , updatePieModel
+  , PieChartDataSet
+  , createDataSet
+  , PieChartData
+  , createData
+  , pieChart
+  , PieChartOptions
+  , defaultPieChartOptions
+  , setChartWidth
+  , setChartHeight
+  , setTooltipWidth
+  , setTooltipHeight
+  , setLegendWidth
+  , setLegendSpacing
+  )
 
 {-|
-This module is used for creating Pie/Doughnut Charts.
+This module is used for creating Pie Charts.
+
+NOTE: Go through the Setup section initially. It is required to get the tooltip functionality of this library.
+
+# Setup (Model, Msg, init and update)
+@docs PieModel, PieMsg, initPieModel, updatePieModel
+
+# Creating data
+@docs PieChartDataSet, createDataSet, PieChartData, createData
+
+# Plotting
+@docs pieChart
+
+# Configuring
+@docs PieChartOptions, defaultPieChartOptions, setChartWidth, setChartHeight, setTooltipWidth, setTooltipHeight, setLegendWidth, setLegendSpacing
 -}
 
 import Html
 import Html.Attributes as HA
 import Html.Events exposing (onMouseOver, onMouseOut)
+import LineChart.Legend exposing (legends)
 import LineChart.Lines exposing (line, ShapeRendering(..))
+import LineChart.Types exposing (..)
 import List exposing (..)
 import Palette.X11 exposing (white)
 import String exposing (fromFloat, fromInt)
@@ -16,6 +50,14 @@ import Svg.Attributes as SA
 import TransparentColor exposing (TransparentColor, toRGBAString)
 import TransparentColor exposing (addLightness, fromColor, opaque)
 
+{-|
+Need this for determining if a sector on the chart has been hovered on. This should be a part of your model.
+
+    type Model =
+      { otherData : OtherData
+      , pieModel : PieModel
+      }
+-}
 type PieModel =
   PieModelC PieModelR
 
@@ -23,45 +65,184 @@ type alias PieModelR =
   { hovered : Maybe Sector
   }
 
+{-|
+Initial state for PieModel type. Should be a part of your init.
+
+    init : Model
+    init =
+      { otherData = {...}
+      , pieModel = initPieModel
+      }
+
+-}
 initPieModel : PieModel
 initPieModel = PieModelC { hovered = Nothing }
 
+{-|
+Used to handle tooltips for the pie chart. This should be added to your own msg type.
+
+    type Msg
+      = Msg1 Data1
+      | Msg2 Data2
+      | PieMessage PieMsg
+-}
 type PieMsg
   = Focus Sector
   | Blur
 
+{-|
+Used to update the PieModel type. This should be used inside your update function.
+
+    update : Msg -> Model -> Model
+    update msg model =
+      case msg of
+        PieMessage pieMsg ->
+          { model
+          | pieModel = updatePieModel pieMsg model.pieModel
+          }
+        NoOp -> model
+-}
 updatePieModel : PieMsg -> PieModel -> PieModel
 updatePieModel msg (PieModelC model) =
   case msg of
     Focus arc -> PieModelC { model | hovered = Just arc }
     Blur -> PieModelC { model | hovered = Nothing }
 
+{-|
+Used to configure the pie chart.
+-}
 type PieChartOptions
   = PieChartOptionsC PieChartOptionsR
 
 type alias PieChartOptionsR =
-  { width : Int
-  , height : Int
+  { chartDimensions : Dimensions
+  , tooltipDimensions : Dimensions
+  , legendWidth : Int
+  , legendSpacing : Int
   }
 
+{-|
+Default options for configuring the line chart.
 
+    options : PieChartOptions
+    options =
+      setChartWidth 1200 defaultPieChartOptions
+      |> setChartHeight 800
+      |> setTooltipWidth 200
+      |> setTooltipHeight 100
+-}
+defaultPieChartOptions : PieChartOptions
+defaultPieChartOptions = PieChartOptionsC
+  { chartDimensions =
+    { width = 600
+    , height = 600
+    }
+  , tooltipDimensions =
+    { width = 120
+    , height = 50
+    }
+  , legendWidth = 100
+  , legendSpacing = 50
+  }
+
+{-|
+Set the Chart Width.
+-}
+setChartWidth : Int -> PieChartOptions -> PieChartOptions
+setChartWidth cw (PieChartOptionsC options) = PieChartOptionsC
+  { options | chartDimensions = setWidth cw options.chartDimensions }
+
+{-|
+Set the Chart Height.
+-}
+setChartHeight : Int -> PieChartOptions -> PieChartOptions
+setChartHeight ch (PieChartOptionsC options) = PieChartOptionsC
+  { options | chartDimensions = setHeight ch options.chartDimensions }
+
+{-|
+Set the Tooltip Width.
+-}
+setTooltipWidth : Int -> PieChartOptions -> PieChartOptions
+setTooltipWidth tw (PieChartOptionsC options) = PieChartOptionsC
+  { options | tooltipDimensions = setWidth tw options.tooltipDimensions }
+
+{-|
+Set the Tooltip Height.
+-}
+setTooltipHeight : Int -> PieChartOptions -> PieChartOptions
+setTooltipHeight th (PieChartOptionsC options) = PieChartOptionsC
+  { options | tooltipDimensions = setHeight th options.tooltipDimensions }
+
+{-|
+Set the width of one legend key.
+-}
+setLegendWidth : Int -> PieChartOptions -> PieChartOptions
+setLegendWidth lw (PieChartOptionsC options) = PieChartOptionsC
+  { options | legendWidth = lw }
+
+{-|
+Set the spacing between two legend keys.
+-}
+setLegendSpacing : Int -> PieChartOptions -> PieChartOptions
+setLegendSpacing ls (PieChartOptionsC options) = PieChartOptionsC
+  { options | legendSpacing = ls }
+
+{-|
+Represents the data that will be used to draw the Pie Chart.
+-}
 type PieChartData
- = PieChartDataC (List PieChartDatum)
+ = PieChartDataC (List PieChartDataSet)
 
-type alias PieChartDatum =
+{-|
+Takes a List of data sets. Each data set represents a sector on the Pie Chart.
+
+    import Palette.X11 exposing (green, red)
+    import TransparentColor exposing (opaque, fromColor)
+
+    data :: PieChartData
+    data = createData
+      [ createDataSet "Delivery Time" 30 (fromColor opaque green)
+      , createDataSet "Manufacturing Time" 180 (fromColor opaque red)
+      ]
+-}
+createData : List PieChartDataSet -> PieChartData
+createData = PieChartDataC
+
+{-|
+Represents one sector of the Pie Chart.
+-}
+type PieChartDataSet =
+  PieChartDataSetC PieChartDataSetR
+
+type alias PieChartDataSetR =
   { color : TransparentColor
   , value : Float
   , label : String
   }
 
-toPairs : List a -> List (a, a)
-toPairs xs =
-  case xs of
-    [] -> []
-    (_ :: rest) -> map2 Tuple.pair xs rest
+{-|
+Create a PieChartDataSet by providing:
+1. A label for the dataset
+2. A value for the dataset
+3. A color which will be used to plot this dataset on the chart. [Click here for the color module](https://package.elm-lang.org/packages/tesk9/palette/latest/TransparentColor).
+
+One dataset corresponds to one sector on the chart.
+
+    import Palette.X11 exposing (black)
+    import TransparentColor exposing (opaque, fromColor)
+
+    serverCost :: PieChartDataSet
+    serverCost = createDataSet "Server Cost" 20.4 (fromColor opaque black)
+-}
+createDataSet : String -> Float -> TransparentColor -> PieChartDataSet
+createDataSet label height color = PieChartDataSetC
+  { label = label
+  , value = height
+  , color = color
+  }
 
 type alias Sector =
-  { datum : PieChartDatum
+  { datum : PieChartDataSetR
   , beginAngle : Float
   , endAngle : Float
   }
@@ -112,14 +293,53 @@ tooltip options =
       ]
     ]
 
+{-|
+Used to draw the pie chart. The arguments are:
+1. Options to configure the pie chart.
+2. The data to be displayed on the chart.
+3. A msg constructor to convert PieMsg into your own msg type.
+4. The pie chart model, which should be stored inside your Elm model.
+
+Following code shows how to setup parts 3 and 4.
+
+    import PieChart exposing (pieChart)
+
+    type Model =
+      { otherData : OtherData
+      , pieModel : PieModel
+      }
+
+    type Msg
+      = Msg1 Data1
+      | Msg2 Data2
+      | PieMessage PieMsg
+
+    init : Model
+    init =
+      { otherData = {...}
+      , pieModel = initPieModel
+      }
+
+    view : Model -> Html Msg
+    view model = pieChart defaultPieChartOptions data PieMessage model.pieModel
+
+    update : Msg -> Model -> Model
+    update msg model =
+      case msg of
+        PieMessage pieMsg ->
+          { model
+          | pieModel = updatePieModel pieMsg model.pieModel
+          }
+        NoOp -> model
+-}
 pieChart : PieChartOptions -> PieChartData -> (PieMsg -> msg) -> PieModel -> Html.Html msg
 pieChart (PieChartOptionsC options) (PieChartDataC data) toMsg (PieModelC model) =
   let
-    tw = 100
-    th = 50
+    (cw, ch) = toPair options.chartDimensions
+    (tw, th) = toPair options.tooltipDimensions
 
-    w = options.width - 20 - 2*tw |> toFloat
-    h = options.height - 20 - 2*th |> toFloat
+    w = cw - 20 - 2*tw |> toFloat
+    h = 0.95 * toFloat ch - 20 - 2 * toFloat th
 
     minDimension = if w < h then w else h
     r = minDimension / 2
@@ -131,8 +351,9 @@ pieChart (PieChartOptionsC options) (PieChartDataC data) toMsg (PieModelC model)
     cx = dx + r
     cy = dy + r
 
-    sortedData = sortBy .value data
-    total = sum <| map .value data
+    unwrappedData = map (\(PieChartDataSetC d) -> d) data
+    sortedData = sortBy .value unwrappedData
+    total = sum <| map .value unwrappedData
 
     sectors : List Sector
     sectors = reverse <| .sectorList <| foldl (\datum {accumAngle, sectorList} ->
@@ -219,9 +440,9 @@ pieChart (PieChartOptionsC options) (PieChartDataC data) toMsg (PieModelC model)
         p = polarToCartesian (r2, theta) |>
           if eqAngle theta 0 || eqAngle theta (pi/2) || eqAngle theta pi || eqAngle theta (3*pi/2)
             then
-              translate (tw/2 * cos theta, th/2 * sin theta)
+              translate (toFloat tw/2 * cos theta, toFloat th/2 * sin theta)
             else
-              translate (tw/2 * toFloat (signum midPoint.x), th/2 * toFloat (signum midPoint.y))
+              translate (toFloat tw/2 * toFloat (signum midPoint.x), toFloat th/2 * toFloat (signum midPoint.y))
       in
         toChartCoordinates origin p
 
@@ -263,13 +484,27 @@ pieChart (PieChartOptionsC options) (PieChartDataC data) toMsg (PieModelC model)
           [ outerPath
           , toTooltipOptions sector |> tooltip
           ]
+
+    legendBox =
+      { w = toFloat cw
+      , h = 0.05 * toFloat ch
+      , x = 0
+      , y = 0
+      }
+
+    legendOptions =
+      { data = map (\d -> (d.color, d.label)) unwrappedData
+      , width = 50
+      , spacing = 50
+      }
   in
   Svg.svg
-    [ options.width |> fromInt >> SA.width
-    , options.height |> fromInt >> SA.height
+    [ cw |> fromInt >> SA.width
+    , ch |> fromInt >> SA.height
     , HA.style "font-family" "sans-serif"
     ]
-    <| map drawSector sectors
+    <| legends legendBox legendOptions
+        ++ map drawSector sectors
         ++ map drawBoundary sectors
         ++ hoveredSector
 
